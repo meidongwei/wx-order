@@ -1,5 +1,6 @@
 <template>
   <div style="display:flex;">
+    <!-- 左侧列表 -->
     <div class="menu-wrapper" ref="menuRef">
       <ul>
         <li v-for="(item, index) in foodsList" :key="item.id"
@@ -10,22 +11,31 @@
         </li>
       </ul>
     </div>
+    <!-- 右侧列表 -->
     <div class="foods-wrapper" ref="foodsRef">
       <div>
         <div class="foods-list-hook" v-for="item in foodsList" :key="item.title">
           <p class="foods-item-title">{{ item.title }}</p>
           <ul class="foods-item-con">
             <li v-for="(food, index) in item.list" :key="index">
-              <span>
-                <div class="control">
-                  <cart-control :food="food" @drop="drop"></cart-control>
+              <div style="display:flex;">
+                <div style="width:80px;height:80px;background-color:#f5cb4d;
+                margin-right:10px;"></div>
+                <div>
+                  <h5>宫保鸡丁</h5>
+                  <p>Lorem ipsum.</p>
                 </div>
-              </span>
+              </div>
+              <!-- 减 num 加 -->
+              <div class="control">
+                <cart-control :food="food" @drop="drop"></cart-control>
+              </div>
             </li>
           </ul>
         </div>
       </div>
     </div>
+    <!-- 购物车 -->
     <div class="shopcart">
       <shop-cart :selectFoods="selectFoods" ref="shopcartRef">
       </shop-cart>
@@ -306,21 +316,39 @@ export default {
 <style scoped>
 /* 左侧按钮模块 */
 .menu-wrapper {
-  height: calc(100vh - 60px);
+  height: calc(100vh - 50px);
   width: 100px;
   overflow: hidden;
+  background-color: #f5f5f5;
 }
 .menu-wrapper ul li {
-  padding: 0;
-  border-bottom: 1px solid #f2f2f2;
+  position: relative;
+}
+.menu-wrapper ul li::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 1px;
+  border-top: 1px solid #e8e8e8;
+  color: #e8e8e8;
+  -webkit-transform-origin: 0 0;
+  transform-origin: 0 0;
+  -webkit-transform: scaleY(0.5);
+  transform: scaleY(0.5);
+}
+.menu-wrapper ul li:first-child::after {
+  border: 0;
 }
 .menu-wrapper ul li a {
   display: block;
   padding: 18px 10px;
   font-size: 14px;
+  color: #585858;
 }
 .current {
-  background-color: #d5d5d5;
+  background-color: #fff;
 }
 
 /* 右侧食物模块 */
@@ -328,19 +356,40 @@ export default {
   height: calc(100vh - 50px);
   flex: 1;
   overflow: hidden;
-  background-color: #ebebeb;
-  border-left: 1px solid #f1f1f1;
+  background-color: #f5f5f5;
 }
 .foods-item-title {
   padding: 5px 10px;
   font-size: 14px;
+  border-left: 1px solid #dddddd;
+  color: #585858;
 }
 .foods-item-con li {
-  padding: 30px 10px;
+  padding: 10px;
   background-color: #fff;
-  border-bottom: 1px solid #f2f2f2;
-  display: flex;
-  justify-content: flex-end;
+  position: relative;
+}
+.control {
+  position: absolute;
+  bottom: 0;
+  right: 10px;
+}
+.foods-item-con li::after {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 0;
+  right: 0;
+  height: 1px;
+  border-top: 1px solid #f5f5f5;
+  color: #f5f5f5;
+  -webkit-transform-origin: 0 0;
+  transform-origin: 0 0;
+  -webkit-transform: scaleY(0.5);
+  transform: scaleY(0.5);
+}
+.foods-item-con li:first-child::after {
+  border: 0;
 }
 
 /* 购物车样式 */

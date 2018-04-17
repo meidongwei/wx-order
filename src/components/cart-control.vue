@@ -79,12 +79,12 @@ export default {
   display: inline-block;
 }
 .cart-control .num {
-  display: inline-block;
-  padding: 6px;
   font-size: 16px;
-  text-align: center;
+  width: 20px;
   color: #93999f;
-  vertical-align: top;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 

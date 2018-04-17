@@ -5,12 +5,14 @@
       <!-- 主要内容 -->
       <div class="cart" @click="toggleList">
         <div class="left">
+          <transition name="aa">
           <div class="logo-wrapper">
             <div class="logo" :class="{'logoLight': totalCount > 0}">
               <i class="iconfont icon-caigou"></i>
             </div>
             <div class="totalCount" v-show="totalCount > 0">{{ totalCount }}</div>
           </div>
+          </transition>
 
           <div class="price" :class="{'priceLight':totalCount > 0}">
             ￥{{ totalPrice }}
@@ -58,10 +60,8 @@
     </div>
 
     <!-- 模糊背景 -->
-    <transition name="fade">
-      <div class="background" @click="hideList"
-        v-show="listShow"></div>
-    </transition>
+    <div class="background" @click="hideList"
+      v-show="listShow"></div>
   </div>
 </template>
 
@@ -127,6 +127,14 @@ export default {
       }
     }
   },
+  watch: {
+    // 购物车商品数量为0时,关闭购物车列表
+    totalCount: function (val) {
+      if (val === 0) {
+        this.listShow = false
+      }
+    }
+  },
   methods: {
     drop (target) {
       this.$refs.ball.drop(target)
@@ -165,7 +173,6 @@ export default {
 
 <style scoped>
   .shop-cart {
-    border-top: 1px solid #eeeeee;
     height: 50px;
     text-align: center;
     box-sizing: border-box;
@@ -277,12 +284,12 @@ export default {
     width: 100%;
     transform: translate3d(0, -100%, 0);
   }
-  .shopcart-list > .fold-enter-active,
-  .shopcart-list > .fold-leave-active {
+  .fold-enter-active,
+  .fold-leave-active {
     transition: all 0.5s;
   }
-  .shopcart-list > .fold-enter,
-  .shopcart-list > .fold-leave-active {
+  .fold-enter,
+  .fold-leave-to {
     transform: translate3d(0, 0, 0);
   }
   .shopcart-list .list-header {
@@ -290,7 +297,6 @@ export default {
     line-height: 40px;
     padding: 0 18px;
     background-color: #f3f5f7;
-    border-bottom: 1px solid rgba(7, 17, 27, 0.1);
   }
   .shopcart-list .list-header .title {
     float: left;
@@ -299,22 +305,44 @@ export default {
   }
   .shopcart-list .list-header .empty {
     float: right;
-    font-size: 12px;
+    font-size: 14px;
     color: rgb(0, 160, 220);
   }
   .shopcart-list .list-content {
-    max-height: 217px;
+    max-height: 300px;
     padding: 0 18px;
     background-color: #fff;
     overflow: hidden;
+    /* overflow: auto; */
+    /* -webkit-overflow-scrolling: touch; */
+  }
+  .shopcart-list .list-content ul {
+    padding-bottom: 20px;
   }
   .list-content .food {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 0;
+    padding: 8px 0;
     box-sizing: border-box;
-    border-bottom: 1px solid rgba(7, 17, 27, 0.1);
+    position: relative;
+  }
+  .list-content .food::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 1px;
+    border-top: 1px solid #f5f5f5;
+    color: #f5f5f5;
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
+    -webkit-transform: scaleY(0.5);
+    transform: scaleY(0.5);
+  }
+  .list-content .food:first-child::after {
+    border: 0;
   }
   .list-content .food > div {
     display: flex;
@@ -325,9 +353,10 @@ export default {
     color: rgb(7, 17, 27);
   }
   .list-content .food .price {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 700;
-    color: rgb(240, 20, 20);
+    color: #f04722;
+    margin-right: 10px;
   }
   /* 模糊背景 */
   .background {
@@ -336,18 +365,7 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    opacity: 1;
     z-index: -2;
-    /* backdrop-filter: blur(5px); */
     background-color: rgba(7, 17, 27, 0.6);
-  }
-  .background > .fold-enter-active,
-  .background > .fold-leave-active {
-    transition: all .5s;
-  }
-  .background > .fold-enter,
-  .background > .fold-leave-active {
-    opacity: 0;
-    background: rgba(7, 17, 27, 0);
   }
 </style>
