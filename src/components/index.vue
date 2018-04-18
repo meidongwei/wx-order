@@ -20,10 +20,28 @@
             <li v-for="(food, index) in item.list" :key="index">
               <div style="display:flex;">
                 <div style="width:80px;height:80px;background-color:#f5cb4d;
-                margin-right:10px;"></div>
+                margin-right:10px;overflow:hidden;">
+                  <img style="height:100%;" src="../assets/img.jpg" alt="">
+                </div>
                 <div>
-                  <h5>宫保鸡丁</h5>
-                  <p>Lorem ipsum.</p>
+                  <h4>{{ food.name }}</h4>
+                  <p style="color:#9c9c9c;font-size:10px;">
+                    源于澳大利亚进口鸡肉和...
+                  </p>
+                  <p style="color:#5b5b5b;font-size:12px;">
+                    月售59份<span style="padding-left:5px;">
+                      好评率100%</span>
+                  </p>
+                  <p style="color:#5b5b5b;font-size:10px;display:flex;">
+                    <span style="background:#ed4f1e;color:#fff;padding:0 2px;border:1px solid #ed4f1e;height:11px;
+                    display:flex;justify-content:center;align-items:center;">5折</span>
+                    <span style="padding-left:2px;border:1px solid #ed4f1e;height:11px;padding-right:2px;
+                    display:flex;justify-content:center;align-items:center;color:#ed4f1e;">
+                      每单限1份优惠</span>
+                  </p>
+                  <p style="color:#f06019;">
+                    	￥{{ food.price }}
+                  </p>
                 </div>
               </div>
               <!-- 减 num 加 -->

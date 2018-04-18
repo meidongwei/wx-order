@@ -11,10 +11,11 @@ export default {
 <style>
 /* -webkit-overflow-scrolling: touch; */
 * {
-  font-family: PingFangSC-Regular, sans-serif,
+  /* font-family: PingFangSC-Regular,
     "Helvetica Neue",Helvetica,Arial,
     "Microsoft Yahei","Hiragino Sans GB",
-    "Heiti SC","WenQuanYi Micro Hei";
+    "Heiti SC","WenQuanYi Micro Hei",sans-serif; */
+  font-family: '-apple-system', "Helvetica Neue", "Roboto", "Segoe UI", sans-serif;
   padding: 0;
   margin: 0;
   -webkit-touch-callout:none;

@@ -19,7 +19,7 @@
           </div>
           <div class="desc">另需配送费 {{ deliveryPrice }} 元</div>
         </div>
-        <div class="right">
+        <div class="right" @click.stop="pay">
           <div class="pay"
             :class="{'payLight': this.totalPrice >= this.minPrice}">
             {{ payDesc }}
@@ -96,7 +96,7 @@ export default {
     // 起送费
     minPrice: {
       type: Number,
-      default: 0
+      default: 20
     }
   },
   computed: {
@@ -156,6 +156,12 @@ export default {
             this.scroll.refresh()
           }
         }, 20)
+      }
+    },
+    // 支付
+    pay () {
+      if (this.totalPrice < this.minPrice) {
+        return
       }
     },
     empty () {
@@ -270,7 +276,7 @@ export default {
     color: rgba(255, 255, 255, 0.4);
     background-color: #2b333b;
   }
-  .right .pay > .payLight {
+  .right .pay.payLight {
     background-color: #FFDA61;
     color: #333;
   }
@@ -284,12 +290,12 @@ export default {
     width: 100%;
     transform: translate3d(0, -100%, 0);
   }
-  .fold-enter-active,
-  .fold-leave-active {
+  .shopcart-list.fold-enter-active,
+  .shopcart-list.fold-leave-active {
     transition: all 0.5s;
   }
-  .fold-enter,
-  .fold-leave-to {
+  .shopcart-list.fold-enter,
+  .shopcart-list.fold-leave-to {
     transform: translate3d(0, 0, 0);
   }
   .shopcart-list .list-header {
