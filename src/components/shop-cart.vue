@@ -5,19 +5,19 @@
       <!-- 主要内容 -->
       <div class="cart" @click="toggleList">
         <div class="left">
-          <transition name="aa">
-          <div class="logo-wrapper">
-            <div class="logo" :class="{'logoLight': totalCount > 0}">
+          <div class="logo-wrapper" :class="{'logoLight': totalCount > 0}">
+            <div class="logo">
               <i class="iconfont icon-caigou"></i>
             </div>
             <div class="totalCount" v-show="totalCount > 0">{{ totalCount }}</div>
           </div>
-          </transition>
 
-          <div class="price" :class="{'priceLight':totalCount > 0}">
-            ￥{{ totalPrice }}
+          <div style="margin-top:5px;">
+            <div class="price" :class="{'priceLight':totalCount > 0}">
+              ￥{{ totalPrice }}
+            </div>
+            <div class="desc">另需配送费 {{ deliveryPrice }} 元</div>
           </div>
-          <div class="desc">另需配送费 {{ deliveryPrice }} 元</div>
         </div>
         <div class="right" @click.stop="pay">
           <div class="pay"
@@ -28,7 +28,7 @@
       </div>
 
       <!-- 小球 -->
-      <shop-cart-balls ref="ball"></shop-cart-balls>
+      <!-- <shop-cart-balls ref="ball"></shop-cart-balls> -->
 
       <!-- 购物车列表 -->
       <transition name="fold">
@@ -49,7 +49,8 @@
                   </div>
 
                   <div class="control">
-                    <cart-control :food="food"></cart-control>
+                    <cart-control :food="food"
+                      @add="add" @decrease="decrease"></cart-control>
                   </div>
                 </div>
               </li>
@@ -66,12 +67,12 @@
 </template>
 
 <script>
-import ShopCartBalls from './shop-cart-balls'
+// import ShopCartBalls from './shop-cart-balls'
 import CartControl from './cart-control'
 import BScroll from 'better-scroll'
 export default {
   components: {
-    ShopCartBalls,
+    // ShopCartBalls,
     CartControl
   },
   data () {
@@ -136,8 +137,16 @@ export default {
     }
   },
   methods: {
-    drop (target) {
-      this.$refs.ball.drop(target)
+    // drop (target) {
+    //   this.$refs.ball.drop(target)
+    // },
+    add (data) {
+      // websocket
+      this.$emit('handleAdd', data)
+    },
+    decrease (data) {
+      // websocket
+      this.$emit('handleDecrease', data)
     },
     toggleList () {
       if (!this.totalCount) {
@@ -168,6 +177,7 @@ export default {
       this.selectFoods.forEach((food) => {
         food.count = 0
       })
+      this.$emit('empty', { type: 2 })
       this.listShow = false
     },
     hideList () {
@@ -184,13 +194,14 @@ export default {
     box-sizing: border-box;
     background-color: #fff;
     z-index: 2;
+    box-shadow: 1px 1px 10px #e7e7e7;
   }
   .cart {
     display: flex;
     width: 100%;
     height: 50px;
     font-size: 0;
-    background-color: #141d27;
+    background-color: #fff;
   }
   .left {
     flex: 1;
@@ -208,24 +219,27 @@ export default {
     border-radius: 50%;
     vertical-align: top;
     text-align: center;
-    background-color: #141d27;
+    background-color: #e7e7e7;
+  }
+  .left .logo-wrapper.logoLight {
+    background-color: #ff9c8a;
   }
   .left .logo-wrapper .logo {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background-color: #2b343c;
+    background-color: #d1d1d1;
+  }
+  .left .logo-wrapper.logoLight .logo {
+    background-color: #fd6d52;
   }
   .left .logo-wrapper .logo i {
     font-size: 24px;
     line-height: 44px;
-    color: #80858a;
+    color: #f2f2f2;
   }
-  .left .logo-wrapper .logoLight {
-    background-color: #FFDA61;
-  }
-  .left .logo-wrapper .logoLight > i {
-    color: #333;
+  .left .logo-wrapper.logoLight .logo > i {
+    color: #fff;
   }
   .left .logo-wrapper .totalCount {
     position: absolute;
@@ -242,14 +256,11 @@ export default {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
   }
   .left .price {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    text-align: left;
     box-sizing: border-box;
-    padding-right: 12px;
     font-size: 18px;
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.4);
+    color: #909090;
     border-right: 1px solid rgba(255, 255, 255, 0.1);
   }
   .left .price > .priceLight {
@@ -259,9 +270,8 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-left: 12px;
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.4);
+    color: #909090;
   }
   .right {
     flex: 0 0 105px;
@@ -271,14 +281,14 @@ export default {
   .right .pay {
     height: 50px;
     line-height: 50px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.4);
-    background-color: #2b333b;
+    color: #d1d1d1;
+    background-color: #f2f2f2;
   }
   .right .pay.payLight {
-    background-color: #FFDA61;
-    color: #333;
+    background-color: #fd6d52;
+    color: #fff;
   }
 
   /* 购物车列表 */
@@ -319,8 +329,6 @@ export default {
     padding: 0 18px;
     background-color: #fff;
     overflow: hidden;
-    /* overflow: auto; */
-    /* -webkit-overflow-scrolling: touch; */
   }
   .shopcart-list .list-content ul {
     padding-bottom: 20px;
@@ -364,6 +372,7 @@ export default {
     color: #f04722;
     margin-right: 10px;
   }
+
   /* 模糊背景 */
   .background {
     position: fixed;

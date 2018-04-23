@@ -21,7 +21,8 @@ import Vue from 'vue'
 
 export default {
   data () {
-    return {}
+    return {
+    }
   },
   props: {
     // 操作哪个商品
@@ -36,9 +37,19 @@ export default {
         return
       }
 
-      if (this.food.count) {
-        this.food.count--
+      // if (this.food.count) {
+      //   this.food.count--
+      // }
+
+      let data = {
+        type: 1,
+        data: {
+          headimgurl: "https://sfault-avatar.b0.upaiyun.com/236/680/236680343-5a5eafe3b2b4e_huge256",
+          dishesid: this.food.dishesid,
+          count: -1
+        }
       }
+      this.$emit('decrease', data)
     },
     add (event) {
       // 解决移动端响应两次点击事件的问题
@@ -48,15 +59,28 @@ export default {
 
       // 修改对象的一个不存在的属性时（this.food.count = 1），DOM 不会更新
       // 需要使用 Vue.set()
-      if (!this.food.count) {
-        Vue.set(this.food, 'count', 1)
-      } else {
-        this.food.count++
-      }
+      // if (!this.food.count) {
+      //   Vue.set(this.food, 'count', 1)
+      // }else {
+      //   this.food.count++
+      // }
+      // this.food.count = this.food.count + 1
 
       // 将当前 dom 传递出去，用来做小球飞入效果
-      this.$emit('drop', event.target)
+      // let target = event.target
+      // this.$emit('drop', target)
+
+      let data = {
+        type: 1,
+        data: {
+          headimgurl: "https://sfault-avatar.b0.upaiyun.com/236/680/236680343-5a5eafe3b2b4e_huge256",
+          dishesid: this.food.dishesid,
+          count: 1
+        }
+      }
+      this.$emit('add', data)
     }
+
   }
 }
 </script>
@@ -75,7 +99,7 @@ export default {
 .cart-control .decrease i,
 .cart-control .add i {
   font-size: 24px;
-  color: #5ED14F;
+  color: #fd6d52;
   display: inline-block;
 }
 .cart-control .num {
