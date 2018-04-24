@@ -2,12 +2,17 @@
   <div>
 
     <!-- 大图模块 -->
-    <div v-show="aiya" class="header">
-      big picture
+    <div v-show="isShowSellerHeader" class="seller-header">
+      <div class="desc">
+        <div>
+          <span>减</span>
+          满100减20，满50减10
+        </div>
+        <div>3个活动</div>
+      </div>
     </div>
 
     <div style="display:flex;">
-
       <!-- 左侧列表 -->
       <div class="menu-wrapper" ref="menuRef">
         <ul>
@@ -16,6 +21,9 @@
             <a @click="selectMenu(index, $event)">
               {{ item.title }}
             </a>
+            <!-- <div class="totalCount">
+              {{ 12 }}
+            </div> -->
           </li>
         </ul>
       </div>
@@ -27,20 +35,19 @@
             <p class="foods-item-title">{{ item.title }}</p>
             <ul class="foods-item-con">
               <li v-for="(food, index) in item.list" :key="index">
-                <div style="display:flex;">
-                  <div style="width:80px;height:80px;background-color:#f5cb4d;
-                  margin-right:10px;overflow:hidden;">
-                    <img style="height:100%;" src="../assets/img.jpg" alt="">
+                <div :class="item.id === 1 ? 'big-show' : 'small-show' ">
+                  <div class="food-left">
+                    <img src="../assets/tt.jpeg" alt="img">
                   </div>
-                  <div>
+                  <div class="food-right">
                     <h4>{{ food.name }}</h4>
                     <p style="color:#9c9c9c;font-size:10px;">
                       源于澳大利亚进口鸡肉和...
                     </p>
-                    <p style="color:#5b5b5b;font-size:12px;">
+                    <!-- <p style="color:#5b5b5b;font-size:12px;">
                       月售59份<span style="padding-left:5px;">
                         好评率100%</span>
-                    </p>
+                    </p> -->
                     <p style="color:#5b5b5b;font-size:10px;display:flex;">
                       <span style="background:#ed4f1e;color:#fff;padding:0 2px;border:1px solid #ed4f1e;height:11px;
                       display:flex;justify-content:center;align-items:center;">5折</span>
@@ -100,7 +107,6 @@ export default {
   },
   data () {
     return {
-      aiyaHeight: 0,
       timeid: 0,
       avatarUrl: '',
       dishesName: '',
@@ -121,13 +127,13 @@ export default {
             {
               dishesid: 1,
               name: '蒸羊羔儿',
-              count: 0,
+              count: 2,
               price: 20
             },
             {
               dishesid: 2,
               name: '蒸熊掌',
-              count: 0,
+              count: 3,
               price: 20
             },
             {
@@ -338,24 +344,22 @@ export default {
       })
       return select
     },
-    aiya () {
+    isShowSellerHeader () {
       if (this.scrollY < 200) {
         return true
       } else {
         return false
       }
-
     }
   },
   created () {
-    this.initWebSocket()
+    // this.initWebSocket()
   },
   mounted () {
     this._initScroll()
     this._calcHeight()
   },
   methods: {
-
     // 头像闪动动画
     handleAvatarFlashing () {
       window.clearTimeout(this.timeid)
@@ -527,18 +531,39 @@ export default {
 
 <style scoped>
 /* 头部 */
-.header {
+.seller-header {
   height: 200px;
-  background-color: #99d0ff;
+  background-color: #636363;
+  background: url('../assets/tt.jpeg') no-repeat center center;
+  background-size: 100%;
+  position: relative;
+}
+.seller-header .desc {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(33, 33, 33, .5);
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+  box-sizing: border-box;
+  color: #fff;
+}
+.seller-header .desc span {
+  background-color: #fd6d52;
+  padding: 0 2px 2px 2px;
 }
 
 /* 左侧按钮模块 */
 .menu-wrapper {
   height: calc(100vh - 50px);
   width: 100px;
-  /* overflow: hidden; */
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
+  /* overflow: auto; */
+  /* -webkit-overflow-scrolling: touch; */
   background-color: #f5f5f5;
 }
 .menu-wrapper ul li {
@@ -569,15 +594,34 @@ export default {
 }
 .current {
   background-color: #fff;
+
+}
+.menu-wrapper ul li.current a {
+  color: #fd6d52;
+}
+.totalCount {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  width: 24px;
+  height: 16px;
+  line-height: 16px;
+  border-radius: 12px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  background-color: #f01414;
+  /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4); */
+  text-align: center;
 }
 
 /* 右侧食物模块 */
 .foods-wrapper {
   height: calc(100vh - 50px);
   flex: 1;
-  /* overflow: hidden; */
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
+  /* overflow: auto; */
+  /* -webkit-overflow-scrolling: touch; */
   background-color: #f5f5f5;
 }
 .foods-item-title {
@@ -590,6 +634,22 @@ export default {
   padding: 10px;
   background-color: #fff;
   position: relative;
+}
+
+/* 小图展示 */
+.small-show {
+  display: flex;
+}
+
+.food-left {
+  width: 80px;
+  height: 80px;
+  background-color: #f5cb4d;
+  margin-right: 10px;
+  overflow: hidden;
+}
+.food-left img {
+  height: 100%;
 }
 .control {
   position: absolute;
@@ -613,6 +673,23 @@ export default {
 .foods-item-con li:first-child::after {
   border: 0;
 }
+
+/* 大图展示 */
+.big-show .food-left {
+  width: 100%;
+  height: 140px;
+  background-color: #f5cb4d;
+  margin-right: 10px;
+  overflow: hidden;
+}
+.big-show .food-left img {
+  width: 100%;
+  height: auto;
+}
+
+
+
+
 
 /* 购物车样式 */
 .shopcart {
@@ -662,4 +739,5 @@ export default {
 .fade-enter {
   bottom: 55px
 }
+
 </style>

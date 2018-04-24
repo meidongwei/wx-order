@@ -9,12 +9,7 @@ export default {
 </script>
 
 <style>
-/* -webkit-overflow-scrolling: touch; */
 * {
-  /* font-family: PingFangSC-Regular,
-    "Helvetica Neue",Helvetica,Arial,
-    "Microsoft Yahei","Hiragino Sans GB",
-    "Heiti SC","WenQuanYi Micro Hei",sans-serif; */
   font-family: '-apple-system', "Helvetica Neue", "Roboto", "Segoe UI", sans-serif;
   padding: 0;
   margin: 0;
@@ -28,5 +23,8 @@ export default {
 }
 ul li {
   list-style: none;
+}
+a {
+  text-decoration: none;
 }
 </style>
