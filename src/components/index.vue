@@ -21,9 +21,10 @@
             <a @click="selectMenu(index, $event)">
               {{ item.title }}
             </a>
-            <!-- <div class="totalCount">
-              {{ 12 }}
-            </div> -->
+            <div class="totalCount"
+              v-show="IsShowCount(item.list)">
+              {{ item.list | handleGetSum }}
+            </div>
           </li>
         </ul>
       </div>
@@ -62,7 +63,7 @@
                 </div>
                 <!-- 减 num 加 -->
                 <div class="control">
-                  <cart-control :food="food"
+                  <cart-control :food="food" :user="user"
                     @add="add" @decrease="decrease"></cart-control>
                 </div>
               </li>
@@ -75,7 +76,7 @@
       <div class="shopcart">
         <shop-cart :selectFoods="selectFoods" ref="shopcartRef"
           @handleAdd="add" @handleDecrease="decrease"
-          @empty="empty">
+          @empty="empty" :user="user">
         </shop-cart>
       </div>
 
@@ -107,6 +108,11 @@ export default {
   },
   data () {
     return {
+      // 用户信息
+      user: {
+        nickname: '',
+        headimgurl: ''
+      },
       timeid: 0,
       avatarUrl: '',
       dishesName: '',
@@ -127,13 +133,13 @@ export default {
             {
               dishesid: 1,
               name: '蒸羊羔儿',
-              count: 2,
+              count: 0,
               price: 20
             },
             {
               dishesid: 2,
               name: '蒸熊掌',
-              count: 3,
+              count: 0,
               price: 20
             },
             {
@@ -321,6 +327,15 @@ export default {
       ]
     }
   },
+  filters: {
+    handleGetSum (list) {
+      let n = 0
+      list.forEach(food => {
+        n += food.count
+      })
+      return n
+    }
+  },
   computed: {
     currentIndex () {
       for (let i = 0; i < this.listHeight.length; i++) {
@@ -353,13 +368,28 @@ export default {
     }
   },
   created () {
-    // this.initWebSocket()
+    // 获取用户信息
+    this.user.nickname = sessionStorage.getItem('nickname')
+    this.user.headimgurl = sessionStorage.getItem('headimgurl')
+
+    // 初始化 foodsList
+    this.initWebSocket()
   },
   mounted () {
     this._initScroll()
     this._calcHeight()
   },
   methods: {
+
+    // 是否显示左侧栏目菜品数量
+    IsShowCount (list) {
+      let n = 0
+      list.forEach(food => {
+        n += food.count
+      })
+      return n > 0 ? true : false
+    },
+
     // 头像闪动动画
     handleAvatarFlashing () {
       window.clearTimeout(this.timeid)
@@ -368,14 +398,6 @@ export default {
         this.isShowShoppingToast = false
       }, 500)
     },
-
-    // 小球掉落动画
-    // drop (target) {
-    //   // 性能优化，异步异步执行下落动画
-    //   this.$nextTick(() => {
-    //     this.$refs.shopcartRef.drop(target)
-    //   })
-    // },
 
     // websocket
     add (data) {
@@ -390,7 +412,11 @@ export default {
 
     // 初始化weosocket
     initWebSocket () {
+      // let tableid = sessionStorage.getItem('tableid')
+      // const wsurl = 'wss://' + location.hostname
+      //   + '/pzcatering-web/ws/dish.do?' + tableid
       const wsurl = 'ws:192.168.1.119:8081/pzcatering-web/ws/dish.do?1'
+
       this.websock = new WebSocket(wsurl)
       this.websock.onmessage = this.websocketonmessage
       this.websock.onerror = this.websocketonerror
@@ -400,8 +426,12 @@ export default {
     // 接收数据
     websocketonmessage (e) {
       /*
-       * type 为 0, 多用户操作
-       * type 为 1, 单用户操作
+       * type 为 0 时,
+       * 新用户进入后要同步服务器信息（其他用户的信息）
+       * type 为 1 时,
+       * 用户点菜后, 更新全部信息, 显示个人点菜信息提示
+       * type 为 2 时,
+       * 清空所有菜品数量
        */
       if (JSON.parse(e.data).type === 0) {
         console.log('type=0')
@@ -429,6 +459,7 @@ export default {
         this.foodsList.forEach(good => {
           good.list.forEach(food => {
 
+            // 更新全部信息
             allList.forEach(item => {
               item.dishes.forEach(dish => {
                 if (food.dishesid === dish.dishesid) {
@@ -437,7 +468,23 @@ export default {
               })
             })
 
+            // 显示个人点菜信息提示
             if (food.dishesid === newDish.dishesid) {
+
+              /*
+               * 本地 sessionStorage 中如果有头像就取出来用,
+               * 如果没有, 就用服务器传过来的头像, 然后存到本地
+               */
+              // if (typeof(Storage) !== "undefined") {
+              //   if (sessionStorage.headimgurl) {
+              //     this.avatarUrl = sessionStorage.headimgurl
+              //   } else {
+              //     this.avatarUrl = newDish.headimgurl
+              //     sessionStorage.headimgurl = newDish.headimgurl
+              //   }
+              // } else {
+            	// 	console.log("抱歉，您的浏览器不支持 web 存储")
+            	// }
               this.avatarUrl = newDish.headimgurl
               this.dishesName = food.name
               this.dishesCount = newDish.count
@@ -472,7 +519,7 @@ export default {
         this.initWebSocket()
       }, 5000)
       console.log("通信发生错误...")
-      console.log(e)
+      // console.log(e)
     },
 
     // 关闭
@@ -481,7 +528,7 @@ export default {
         this.initWebSocket()
       }, 5000)
       console.log("连接已关闭...")
-      console.log(e)
+      // console.log(e)
     },
 
     /*
@@ -524,6 +571,14 @@ export default {
         this.listHeight.push(height)
       }
     }
+
+    // 小球掉落动画
+    // drop (target) {
+    //   // 性能优化，异步异步执行下落动画
+    //   this.$nextTick(() => {
+    //     this.$refs.shopcartRef.drop(target)
+    //   })
+    // }
 
   }
 }
@@ -642,14 +697,15 @@ export default {
 }
 
 .food-left {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 60px;
   background-color: #f5cb4d;
   margin-right: 10px;
   overflow: hidden;
 }
 .food-left img {
-  height: 100%;
+  width: 100%;
+  height: auto;
 }
 .control {
   position: absolute;
@@ -677,7 +733,7 @@ export default {
 /* 大图展示 */
 .big-show .food-left {
   width: 100%;
-  height: 140px;
+  height: 153px;
   background-color: #f5cb4d;
   margin-right: 10px;
   overflow: hidden;

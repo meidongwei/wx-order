@@ -49,7 +49,7 @@
                   </div>
 
                   <div class="control">
-                    <cart-control :food="food"
+                    <cart-control :food="food" :user="user"
                       @add="add" @decrease="decrease"></cart-control>
                   </div>
                 </div>
@@ -98,6 +98,9 @@ export default {
     minPrice: {
       type: Number,
       default: 20
+    },
+    user: {
+      type: Object
     }
   },
   computed: {

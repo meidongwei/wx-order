@@ -46,7 +46,7 @@ export default {
             let rect = ball.el.getBoundingClientRect() //获取小球的相对于视口的位移(小球高度)
             let x = rect.left - 32
             let y = -(window.innerHeight - rect.top - 22) //负数,因为是从左上角往下的的方向
-            el.style.display = ''; //清空display
+            el.style.display = '' //清空display
             el.style.webkitTransform = `translate3d(0,${y}px,0)`
             el.style.transform = `translate3d(0,${y}px,0)`
             //处理内层动画

@@ -7,16 +7,19 @@
 
       <div class="header">
         <div class="logo-con">
-          <img src="../assets/tt.jpeg" alt="">
-          <h2 style="color:#fff;">台卡: A101</h2>
+          <img class="store" src="../assets/tt.jpeg" alt="">
+          <h2 style="color:#fff;">台卡: {{ tableid }}</h2>
         </div>
         <div class="more">
-          <a href="javascript:;" class="primary">more</a>
+          <a href="javascript:;" class="avatar">
+            <img :src="headimgurl" alt="">
+            <!-- <img src="../assets/avatar.png" alt=""> -->
+          </a>
         </div>
       </div>
 
       <div class="welcome">
-        欢迎光临，客观您几位？
+        欢迎光临, {{ nickname }}, 您几位？
       </div>
 
       <div class="con">
@@ -39,9 +42,14 @@
 </template>
 
 <script>
+import axios from 'axios'
+import httpUrl from '@/http_url'
 export default {
   data () {
     return {
+      nickname: '',
+      headimgurl: '',
+      tableid: '',
       list: [
         {
           id: 1
@@ -90,6 +98,33 @@ export default {
         }
       ]
     }
+  },
+  created () {
+    this.getUserInfo()
+  },
+  methods: {
+    // 获取用户数据
+    getUserInfo () {
+      axios.get(httpUrl.getWxUserinfo)
+      .then(res => {
+        if (res.data.errcode === 0) {
+          // 拿到用户信息存入 sessionStorage
+          if (typeof(Storage) !== "undefined") {
+            this.nickname = res.data.res.nickname
+            this.headimgurl = res.data.res.headimgurl
+            this.tableid = res.data.res.tableid
+            sessionStorage.nickname = this.nickname
+            sessionStorage.headimgurl = this.headimgurl
+            sessionStorage.tableid = this.tableid
+          } else {
+          	console.log("抱歉，您的浏览器不支持 web 存储")
+          }
+        } else {
+          console.log(res.data.errmsg)
+        }
+      })
+      .catch(err => console.log(err))
+    }
   }
 }
 </script>
@@ -134,15 +169,13 @@ export default {
     border-radius: 100%;
     height: 40px;
     width: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    box-shadow: 1px 1px 5px #000000;
+    overflow: hidden;
   }
-  .start-container .header .more a {
-    font-size: 14px;
-    color: #fff;
+  .more .avatar img {
+    width: 100%;
   }
-  .start-container img {
+  .start-container .store {
     width: 80px;
     height: 80px;
     border-radius: 50px;
@@ -152,7 +185,7 @@ export default {
   .welcome {
     color: #fff;
     text-align: center;
-    margin-top: 30px;
+    /* margin-top: 20px; */
     margin-bottom: 40px;
   }
 
@@ -171,13 +204,13 @@ export default {
   }
   .linkNum a {
     color: #282828;
-    font-size: 16px;
+    font-size: 14px;
     background-color: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border-radius: 100%;
     cursor: pointer;
     margin-bottom: 15px;
@@ -185,7 +218,6 @@ export default {
 
   .footer {
     height: 100px;
-    margin-top: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -206,6 +238,7 @@ export default {
     background-color: #fd6d52;
     border: 1px solid #fd6d52;
   }
+
 
 
 
