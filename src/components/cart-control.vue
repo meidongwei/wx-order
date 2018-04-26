@@ -76,7 +76,8 @@ export default {
       let data = {
         type: 1,
         data: {
-          headimgurl: "https://sfault-avatar.b0.upaiyun.com/236/680/236680343-5a5eafe3b2b4e_huge256",
+          // headimgurl: "https://sfault-avatar.b0.upaiyun.com/236/680/236680343-5a5eafe3b2b4e_huge256",
+          headimgurl: this.user.headimgurl,
           dishesid: this.food.dishesid,
           count: 1
         }

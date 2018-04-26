@@ -7,33 +7,44 @@
 
       <div class="header">
         <div class="logo-con">
-          <img class="store" src="../assets/tt.jpeg" alt="">
-          <h2 style="color:#fff;">台卡: {{ tableid }}</h2>
+          <img class="store" src="/pzcatering-web/images/daxia.jpeg">
+          <p>台卡: {{ tableno }}</p>
         </div>
         <div class="more">
           <a href="javascript:;" class="avatar">
-            <img :src="headimgurl" alt="">
-            <!-- <img src="../assets/avatar.png" alt=""> -->
+            <img :src="headimgurl">
           </a>
         </div>
       </div>
 
       <div class="welcome">
-        欢迎光临, {{ nickname }}, 您几位？
+        <p class="nickname">{{ nickname }}</p>
+        <p>欢迎光临, 客观您几位?</p>
       </div>
 
       <div class="con">
-        <div class="linkNum"
-          v-for="(item, index) in list" :key="index">
-          <router-link :to="{ name: 'index' }">
-          {{ item.id }}
-        </router-link>
+        <div class="peopleNum"
+          v-for="(item, index) in peopleList" :key="item.id">
+          <a href="javascript:;"
+            :class="{'p-active': index === nowIndex2}"
+            @click="selectNum(index)">
+            {{ item.id }}
+          </a>
         </div>
       </div>
 
       <div class="footer">
-        <a class="btn-primary-circle active" href="javascript:;">堂食</a>
-        <a class="btn-primary-circle" href="javascript:;">打包外卖</a>
+        <a href="javascript:;" class="btn-primary-circle"
+          v-for="(item, index) in btnList" :key="item.id"
+          :class="{active: index === nowIndex}"
+          @click="selectTorD(index)">
+          {{ item.name }}
+        </a>
+      </div>
+
+      <div class="loading" v-show="isShowLoading">
+        <img src="../assets/fruits-lemon.gif">
+        请稍等...
       </div>
 
     </div>
@@ -47,55 +58,32 @@ import httpUrl from '@/http_url'
 export default {
   data () {
     return {
+      nowIndex: 0, // 选择堂食或打包
+      nowIndex2: -1, // 选择几位
+      isShowLoading: false,
       nickname: '',
       headimgurl: '',
-      tableid: '',
-      list: [
-        {
-          id: 1
-        },
-        {
-          id: 2
-        },
-        {
-          id: 3
-        },
-        {
-          id: 4
-        },
-        {
-          id: 5
-        },
-        {
-          id: 6
-        },
-        {
-          id: 7
-        },
-        {
-          id: 8
-        },
-        {
-          id: 9
-        },
-        {
-          id: 10
-        },
-        {
-          id: 11
-        },
-        {
-          id: 12
-        },
-        {
-          id: 13
-        },
-        {
-          id: 14
-        },
-        {
-          id: 15
-        }
+      tableno: '',
+      btnList: [
+        { id: 1, name: '堂食' },
+        { id: 2, name: '打包外卖' },
+      ],
+      peopleList: [
+        { id: 1 },
+        { id: 2 },
+        { id: 3 },
+        { id: 4 },
+        { id: 5 },
+        { id: 6 },
+        { id: 7 },
+        { id: 8 },
+        { id: 9 },
+        { id: 10 },
+        { id: 11 },
+        { id: 12 },
+        { id: 13 },
+        { id: 14 },
+        { id: 15 }
       ]
     }
   },
@@ -105,6 +93,10 @@ export default {
   methods: {
     // 获取用户数据
     getUserInfo () {
+      this.isShowLoading = true
+      setTimeout(() => {
+        this.isShowLoading = false
+      }, 1000)
       axios.get(httpUrl.getWxUserinfo)
       .then(res => {
         if (res.data.errcode === 0) {
@@ -112,18 +104,30 @@ export default {
           if (typeof(Storage) !== "undefined") {
             this.nickname = res.data.res.nickname
             this.headimgurl = res.data.res.headimgurl
-            this.tableid = res.data.res.tableid
+            this.tableno = res.data.res.tableno
+
             sessionStorage.nickname = this.nickname
             sessionStorage.headimgurl = this.headimgurl
-            sessionStorage.tableid = this.tableid
+            sessionStorage.tableid = res.data.res.tableid
+
+            this.isShowLoading = false
           } else {
+            this.isShowLoading = false
           	console.log("抱歉，您的浏览器不支持 web 存储")
           }
         } else {
+          this.isShowLoading = false
           console.log(res.data.errmsg)
         }
       })
       .catch(err => console.log(err))
+    },
+    selectTorD (index) {
+      this.nowIndex = index
+    },
+    selectNum (index) {
+      this.nowIndex2 = index
+      this.$router.push({name: 'index'})
     }
   }
 }
@@ -133,13 +137,13 @@ export default {
   .start-wrapper {
     height: 100vh;
     width: 100vw;
-    background: url('../assets/tt.jpeg') no-repeat center center;
+    background: url('/pzcatering-web/images/daxia.jpeg') no-repeat center center;
     box-sizing: border-box;
   }
   .bg {
-    height: 100%;
-    width: 100%;
-    /*opacity: 0.8;*/
+    height: 100vh;
+    width: 100vw;
+    /* opacity: 0.8; */
     background: -webkit-linear-gradient(rgba(255,0,0,0), #000000); /* Safari 5.1 - 6.0 */
     background: -o-linear-gradient(rgba(255,0,0,0), #000000); /* Opera 11.1 - 12.0 */
     background: -moz-linear-gradient(rgba(255,0,0,0), #000000); /* Firefox 3.6 - 15 */
@@ -161,15 +165,18 @@ export default {
   .start-container .header .logo-con {
     text-align: center;
   }
+  .start-container .header .logo-con p {
+    color: #fff;
+    font-size: 20px;
+  }
   .start-container .header .more {
     position: absolute;
     top: 20px;
     right: 20px;
-    background-color: #fd6d52;
+    background-color: #fff;
     border-radius: 100%;
     height: 40px;
     width: 40px;
-    box-shadow: 1px 1px 5px #000000;
     overflow: hidden;
   }
   .more .avatar img {
@@ -179,14 +186,17 @@ export default {
     width: 80px;
     height: 80px;
     border-radius: 50px;
-    border: 5px solid #dbdbdb;
+    border: 1px solid #fff;
   }
 
   .welcome {
     color: #fff;
     text-align: center;
-    /* margin-top: 20px; */
     margin-bottom: 40px;
+  }
+  .welcome .nickname {
+    font-size: 18px;
+    margin-bottom: 5px;
   }
 
   .con {
@@ -196,13 +206,13 @@ export default {
     padding: 0 50px;
     box-sizing: border-box;
   }
-  .linkNum {
+  .peopleNum {
     width: 20%;
     display: flex;
     justify-content: center;
     align-items: center;
   }
-  .linkNum a {
+  .peopleNum a {
     color: #282828;
     font-size: 14px;
     background-color: #fff;
@@ -214,6 +224,10 @@ export default {
     border-radius: 100%;
     cursor: pointer;
     margin-bottom: 15px;
+  }
+  .peopleNum a.p-active {
+    background-color: #fd6d52;
+    color: #fff;
   }
 
   .footer {
@@ -239,14 +253,20 @@ export default {
     border: 1px solid #fd6d52;
   }
 
-
-
-
-
-
-
-
-
+  .loading {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: #fff;
+    color: #c6c6c6;
+    font-size: 14px;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 
 
 

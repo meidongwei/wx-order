@@ -41,17 +41,6 @@ cart-control.vue
 	]
 }
 
-// 单用户
-{
-	type: 1,
-	data: {
-		headimgurl: "http://www.baidu.com.jpg",
-		dishesid: 1,
-		count: 3
-	}
-}
-
-
 
 
 

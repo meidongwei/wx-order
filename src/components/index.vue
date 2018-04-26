@@ -38,7 +38,8 @@
               <li v-for="(food, index) in item.list" :key="index">
                 <div :class="item.id === 1 ? 'big-show' : 'small-show' ">
                   <div class="food-left">
-                    <img src="../assets/tt.jpeg" alt="img">
+                    <span>暂无图片</span>
+                    <img src="/pzcatering-web/images/daxia.jpeg">
                   </div>
                   <div class="food-right">
                     <h4>{{ food.name }}</h4>
@@ -79,17 +80,6 @@
           @empty="empty" :user="user">
         </shop-cart>
       </div>
-
-      <!-- 点菜 +1 提示窗口 -->
-      <transition name="fade">
-        <div class="shoppingToast" v-if="isShowShoppingToast">
-          <img :src="avatarUrl">
-          <p class="dishesName">{{ dishesName }}</p>
-          <p class="dishesCount" v-if="dishesCount > 0">+{{ dishesCount }}</p>
-          <p class="dishesCount" v-else>{{ dishesCount }}</p>
-        </div>
-      </transition>
-
     </div>
 
   </div>
@@ -117,8 +107,6 @@ export default {
       avatarUrl: '',
       dishesName: '',
       dishesCount: 1,
-      userList: [],
-      isShowShoppingToast: false,
       websock: null,
       listHeight: [],
       // 计算当前滚动的 Y 值
@@ -328,6 +316,8 @@ export default {
     }
   },
   filters: {
+    // 监听菜品类别中所有菜品的数量,
+    // 返回菜品数量的和
     handleGetSum (list) {
       let n = 0
       list.forEach(food => {
@@ -337,6 +327,7 @@ export default {
     }
   },
   computed: {
+    // 监听右侧滚动值, 实时显示左侧类别
     currentIndex () {
       for (let i = 0; i < this.listHeight.length; i++) {
         let h1 = this.listHeight[i]
@@ -348,6 +339,9 @@ export default {
       }
       return 0
     },
+
+    // 监听 foodsList 的变化,
+    // 把已点的菜品信息传给 shop-cart
     selectFoods () {
       let select = []
       this.foodsList.forEach((good) => {
@@ -359,6 +353,8 @@ export default {
       })
       return select
     },
+
+    // 监听 scrollY < 200 时, 显示大图模块
     isShowSellerHeader () {
       if (this.scrollY < 200) {
         return true
@@ -368,7 +364,7 @@ export default {
     }
   },
   created () {
-    // 获取用户信息
+    // 获取用户信息, 用于传值给 shop-cart 和 cart-control
     this.user.nickname = sessionStorage.getItem('nickname')
     this.user.headimgurl = sessionStorage.getItem('headimgurl')
 
@@ -388,15 +384,6 @@ export default {
         n += food.count
       })
       return n > 0 ? true : false
-    },
-
-    // 头像闪动动画
-    handleAvatarFlashing () {
-      window.clearTimeout(this.timeid)
-      this.isShowShoppingToast = true
-      this.timeid = setTimeout(() => {
-        this.isShowShoppingToast = false
-      }, 500)
     },
 
     // websocket
@@ -433,76 +420,78 @@ export default {
        * type 为 2 时,
        * 清空所有菜品数量
        */
-      if (JSON.parse(e.data).type === 0) {
-        console.log('type=0')
-        if (JSON.parse(e.data).data.length !== 0) {
-          this.userList = JSON.parse(e.data).data
-          for (let i=0;i<this.userList.length;i++) {
-            this.foodsList.forEach(good => {
-              good.list.forEach(food => {
-                for (let j=0;j<this.userList[i].dishes.length;j++) {
-                  if (food.dishesid === this.userList[i].dishes[j].dishesid) {
-                    food.count = this.userList[i].dishes[j].count
+      let res = JSON.parse(e.data)
+
+      if (res.type === 0) {
+
+        if (res.data.length !== 0) {
+
+          this.foodsList.forEach(good => {
+            good.list.forEach(food => {
+              res.data.forEach(item => {
+                item.dishes.forEach(dish => {
+                  if (food.dishesid === dish.dishesid) {
+                    food.count = dish.count
                   }
-                }
+                })
               })
             })
-          }
+          })
+
         }
         console.log('同步成功')
 
-      } else if (JSON.parse(e.data).type === 1) {
-        console.log('type=1')
-        let allList = JSON.parse(e.data).data.allDishes
-        let newDish = JSON.parse(e.data).data.newDish
+      } else if (res.type === 1) {
 
+        /*
+         * type 为 1 时, 包含一个数组一个对象,
+         * 数组: res.data.allDishes (所有人点的所有菜品信息)
+         * 对象: res.data.newDish (个人的点菜信息)
+         */
         this.foodsList.forEach(good => {
           good.list.forEach(food => {
 
             // 更新全部信息
-            allList.forEach(item => {
+            food.count = 0
+            res.data.allDishes.forEach(item => {
               item.dishes.forEach(dish => {
                 if (food.dishesid === dish.dishesid) {
-                  food.count = dish.count
+                  food.count += dish.count
                 }
               })
             })
 
             // 显示个人点菜信息提示
-            if (food.dishesid === newDish.dishesid) {
-
-              /*
-               * 本地 sessionStorage 中如果有头像就取出来用,
-               * 如果没有, 就用服务器传过来的头像, 然后存到本地
-               */
+            if (food.dishesid === res.data.newDish.dishesid) {
+              this.dishesName = food.name
               // if (typeof(Storage) !== "undefined") {
               //   if (sessionStorage.headimgurl) {
               //     this.avatarUrl = sessionStorage.headimgurl
               //   } else {
-              //     this.avatarUrl = newDish.headimgurl
-              //     sessionStorage.headimgurl = newDish.headimgurl
+              //     this.avatarUrl = res.data.newDish.headimgurl
+              //     sessionStorage.headimgurl = res.data.newDish.headimgurl
               //   }
               // } else {
-            	// 	console.log("抱歉，您的浏览器不支持 web 存储")
-            	// }
-              this.avatarUrl = newDish.headimgurl
-              this.dishesName = food.name
-              this.dishesCount = newDish.count
-              this.handleAvatarFlashing()
+              // 	console.log("抱歉，您的浏览器不支持 web 存储")
+              // }
+              this.avatarUrl = res.data.newDish.headimgurl
+              this.dishesCount = res.data.newDish.count
+              this.$notice(this.avatarUrl, this.dishesName, this.dishesCount)
             }
 
           })
         })
         console.log("数据已接收...")
 
-      } else if (JSON.parse(e.data).type === 2) {
-        console.log('type=2')
+      } else if (res.type === 2) {
+
         this.foodsList.forEach(good => {
           good.list.forEach(food => {
             food.count = 0
           })
         })
         console.log("数据已清空!")
+
       }
 
     },
@@ -589,7 +578,7 @@ export default {
 .seller-header {
   height: 200px;
   background-color: #636363;
-  background: url('../assets/tt.jpeg') no-repeat center center;
+  background: url('/pzcatering-web/images/daxia.jpeg') no-repeat center center;
   background-size: 100%;
   position: relative;
 }
@@ -699,13 +688,23 @@ export default {
 .food-left {
   width: 100px;
   height: 60px;
-  background-color: #f5cb4d;
+  background-color: #ececec;
   margin-right: 10px;
   overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.food-left span {
+  position: fixed;
+  z-index: 1;
+  color: #d2d2d2;
+  font-size: 14px;
 }
 .food-left img {
   width: 100%;
   height: auto;
+  z-index: 2;
 }
 .control {
   position: absolute;
@@ -734,13 +733,23 @@ export default {
 .big-show .food-left {
   width: 100%;
   height: 153px;
-  background-color: #f5cb4d;
+  background-color: #ececec;
   margin-right: 10px;
   overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.big-show .food-left span {
+  position: fixed;
+  z-index: 1;
+  color: #d2d2d2;
+  font-size: 20px;
 }
 .big-show .food-left img {
   width: 100%;
   height: auto;
+  z-index: 2;
 }
 
 
@@ -755,45 +764,5 @@ export default {
   width: 100%;
 }
 
-/* 点菜 +1 提示窗口 */
-.shoppingToast {
-  height: 35px;
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  color: #fff;
-  border-radius: 3px;
-  background-color: #ffffff;
-  box-shadow: 1px 1px 10px #c9c9c9;
-  position: fixed;
-  left: 10px;
-  bottom: 65px;
-}
-.shoppingToast img {
-  width: 35px;
-  height: 35px;
-  border-top-left-radius: 3px;
-  border-bottom-left-radius: 3px;
-  margin-right: 5px;
-}
-.shoppingToast .dishesName {
-  color: #757575;
-  margin-right: 5px;
-}
-.shoppingToast .dishesCount {
-  color: #757575;
-  margin-right: 10px;
-}
-.fade-enter-active,
-.fade-leave-active {
-  transition: all .5s;
-}
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-.fade-enter {
-  bottom: 55px
-}
 
 </style>

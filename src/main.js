@@ -9,6 +9,10 @@ Vue.config.productionTip = false
 // 引入字体图标样式
 import '@/assets/ali-fonts/iconfont.css'
 
+// 引入头像提示组件
+import Notice from '@/components/avatarToast/index'
+Vue.use(Notice)
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
