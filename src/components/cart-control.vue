@@ -8,7 +8,9 @@
       </div>
     </transition>
 
-    <div class="num" v-show="food.count > 0">{{ food.count }}</div>
+    <div class="num" v-show="food.count > 0">
+      {{ food.count }}
+    </div>
 
     <div class="add" @click.stop.prevent="add($event)">
       <i class="iconfont icon-jia-yuankuang"></i>
@@ -17,21 +19,27 @@
 </template>
 
 <script>
-import Vue from 'vue'
-
 export default {
   data () {
     return {
+      openid: 'abc',
+      headimgurl: 'kkk'
     }
   },
   props: {
     // 操作哪个商品
+    // food: {
+    //   count: 20,
+    //   dishesid: 1,
+    //   rcid: 1
+    // }
     food: {
       type: Object
-    },
-    user: {
-      type: Object
     }
+  },
+  created () {
+    // this.openid = sessionStorage.getItem('openid')
+    // this.headimgurl = sessionStorage.getItem('headimgurl')
   },
   methods: {
     decrease (event) {
@@ -39,15 +47,14 @@ export default {
       if (!event._constructed) {
         return
       }
-
-      // if (this.food.count) {
-      //   this.food.count--
-      // }
-
+      // let n = parseInt(Math.random()*100)
+      // this.openid = this.openid + n
       let data = {
-        type: 1,
+        type: 0,
         data: {
-          headimgurl: this.user.headimgurl,
+          openid: this.openid,
+          headimgurl: this.headimgurl,
+          rcid: this.food.rcid,
           dishesid: this.food.dishesid,
           count: -1
         }
@@ -59,25 +66,14 @@ export default {
       if (!event._constructed) {
         return
       }
-
-      // 修改对象的一个不存在的属性时（this.food.count = 1），DOM 不会更新
-      // 需要使用 Vue.set()
-      // if (!this.food.count) {
-      //   Vue.set(this.food, 'count', 1)
-      // }else {
-      //   this.food.count++
-      // }
-      // this.food.count = this.food.count + 1
-
-      // 将当前 dom 传递出去，用来做小球飞入效果
-      // let target = event.target
-      // this.$emit('drop', target)
-
+      // let n = parseInt(Math.random()*100)
+      // this.openid = this.openid + n
       let data = {
-        type: 1,
+        type: 0,
         data: {
-          // headimgurl: "https://sfault-avatar.b0.upaiyun.com/236/680/236680343-5a5eafe3b2b4e_huge256",
-          headimgurl: this.user.headimgurl,
+          openid: this.openid,
+          headimgurl: this.headimgurl,
+          rcid: this.food.rcid,
           dishesid: this.food.dishesid,
           count: 1
         }

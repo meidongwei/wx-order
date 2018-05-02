@@ -9,6 +9,7 @@ export default {
 </script>
 
 <style>
+/* #fd6d52 */
 * {
   font-family: '-apple-system', "Helvetica Neue", "Roboto", "Segoe UI", sans-serif;
   padding: 0;

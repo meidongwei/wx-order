@@ -61,6 +61,7 @@ export default {
       nowIndex: 0, // 选择堂食或打包
       nowIndex2: -1, // 选择几位
       isShowLoading: false,
+      openid: '',
       nickname: '',
       headimgurl: '',
       tableno: '',
@@ -105,10 +106,12 @@ export default {
             this.nickname = res.data.res.nickname
             this.headimgurl = res.data.res.headimgurl
             this.tableno = res.data.res.tableno
+            this.openid = res.data.res.openid
 
             sessionStorage.nickname = this.nickname
             sessionStorage.headimgurl = this.headimgurl
             sessionStorage.tableid = res.data.res.tableid
+            sessionStorage.openid = this.openid
 
             this.isShowLoading = false
           } else {

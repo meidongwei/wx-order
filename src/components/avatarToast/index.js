@@ -19,8 +19,12 @@ const Notice = (avatarUrl, content, num) => {
   instance.vm = instance.$mount()
   instance.vm.visible = true
   instance.dom = instance.vm.$el
-  document.body.appendChild(instance.dom)
-  instance.dom.style.zIndex = nId + 1001
+  // document.body.appendChild(instance.dom)
+  let cc = document.getElementById('cc')
+  if (cc) {
+    cc.appendChild(instance.dom)
+  }
+  // instance.dom.style.zIndex = nId + 1001
   /**
    * TODO: 添加多条通知位置下排
    *       添加通知类型：success、error、info

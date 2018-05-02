@@ -11,19 +11,19 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       visible: false,
       duration: 1000
     }
   },
   methods: {
-    setTimer() {
+    setTimer () {
       setTimeout(() => {
         this.close()
       }, this.duration)
     },
-    close() {
+    close () {
       this.visible = false
       setTimeout(() => {
         this.$destroy(true)
@@ -38,7 +38,7 @@ export default {
 </script>
 <style scoped>
   .box {
-    position: fixed;
+    position: absolute;
     left: 5px;
     bottom: 70px;
     background-color: rgba(0,0,0,.8);

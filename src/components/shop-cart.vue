@@ -27,9 +27,6 @@
         </div>
       </div>
 
-      <!-- 小球 -->
-      <!-- <shop-cart-balls ref="ball"></shop-cart-balls> -->
-
       <!-- 购物车列表 -->
       <transition name="fold">
         <div class="shopcart-list" v-show="listShow">
@@ -41,21 +38,22 @@
           <div class="list-content" ref="listContentRef">
             <ul>
               <li class="food" v-for="food in selectFoods">
-                <span class="name">{{ food.name }}</span>
+                <span class="name">{{ food.value.name }}</span>
 
                 <div>
                   <div class="price">
-                    <span>￥{{ food.price * food.count }}</span>
+                    <span>￥{{ food.value.price * food.value.count }}</span>
                   </div>
 
                   <div class="control">
-                    <cart-control :food="food" :user="user"
+                    <cart-control :food="food"
                       @add="add" @decrease="decrease"></cart-control>
                   </div>
                 </div>
               </li>
             </ul>
           </div>
+
         </div>
       </transition>
     </div>
@@ -67,12 +65,10 @@
 </template>
 
 <script>
-// import ShopCartBalls from './shop-cart-balls'
 import CartControl from './cart-control'
 import BScroll from 'better-scroll'
 export default {
   components: {
-    // ShopCartBalls,
     CartControl
   },
   data () {
@@ -84,10 +80,7 @@ export default {
   props: {
     // 加入购物车的商品
     selectFoods: {
-      type: Array,
-      default () {
-        return []
-      }
+      type: Array
     },
     // 配送费
     deliveryPrice: {
@@ -98,25 +91,22 @@ export default {
     minPrice: {
       type: Number,
       default: 20
-    },
-    user: {
-      type: Object
     }
   },
   computed: {
     // 所选商品总价
     totalPrice () {
       let total = 0
-      this.selectFoods.forEach((food) => {
-        total += food.price * food.count
+      this.selectFoods.forEach(food => {
+        total += food.value.price * food.value.count
       })
       return total
     },
     // 所选商品总数量
     totalCount () {
       let total = 0
-      this.selectFoods.forEach((food) => {
-        total += food.count
+      this.selectFoods.forEach(food => {
+        total += food.value.count
       })
       return total
     },
@@ -140,15 +130,10 @@ export default {
     }
   },
   methods: {
-    // drop (target) {
-    //   this.$refs.ball.drop(target)
-    // },
     add (data) {
-      // websocket
       this.$emit('handleAdd', data)
     },
     decrease (data) {
-      // websocket
       this.$emit('handleDecrease', data)
     },
     toggleList () {
@@ -180,7 +165,7 @@ export default {
       this.selectFoods.forEach((food) => {
         food.count = 0
       })
-      this.$emit('empty', { type: 2 })
+      this.$emit('empty', { type: 1 })
       this.listShow = false
     },
     hideList () {
@@ -328,7 +313,8 @@ export default {
     color: rgb(0, 160, 220);
   }
   .shopcart-list .list-content {
-    max-height: 300px;
+    /* max-height: 300px; */
+    max-height: calc(100vh - 90px);
     padding: 0 18px;
     background-color: #fff;
     overflow: hidden;

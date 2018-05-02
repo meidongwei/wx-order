@@ -12,18 +12,19 @@
       </div>
     </div>
 
-    <div style="display:flex;">
+    <!-- 头像提示组件会挂在到 id 为 cc 的 dom 中 -->
+    <div id="cc" style="display:flex;">
       <!-- 左侧列表 -->
       <div class="menu-wrapper" ref="menuRef">
         <ul>
-          <li v-for="(item, index) in foodsList" :key="item.id"
+          <li v-for="(value, key, index) in foodsList" :key="key"
             :class="{'current': currentIndex === index}">
             <a @click="selectMenu(index, $event)">
-              {{ item.title }}
+              {{ value.title }}
             </a>
             <div class="totalCount"
-              v-show="IsShowCount(item.list)">
-              {{ item.list | handleGetSum }}
+              v-show="IsShowCount(value.list)">
+              {{ value.list | handleGetSum }}
             </div>
           </li>
         </ul>
@@ -32,17 +33,18 @@
       <!-- 右侧列表 -->
       <div class="foods-wrapper" ref="foodsRef">
         <div>
-          <div class="foods-list-hook" v-for="item in foodsList" :key="item.title">
-            <p class="foods-item-title">{{ item.title }}</p>
+          <div class="foods-list-hook"
+            v-for="(value, key) in foodsList" :key="key">
+            <p class="foods-item-title">{{ value.title }}</p>
             <ul class="foods-item-con">
-              <li v-for="(food, index) in item.list" :key="index">
-                <div :class="item.id === 1 ? 'big-show' : 'small-show' ">
+              <li v-for="(val, k) in value.list" :key="k">
+                <div :class="key === '1' ? 'big-show' : 'small-show' ">
                   <div class="food-left">
                     <span>暂无图片</span>
                     <img src="/pzcatering-web/images/daxia.jpeg">
                   </div>
                   <div class="food-right">
-                    <h4>{{ food.name }}</h4>
+                    <h4>{{ val.name }}</h4>
                     <p style="color:#9c9c9c;font-size:10px;">
                       源于澳大利亚进口鸡肉和...
                     </p>
@@ -58,13 +60,13 @@
                         每单限1份优惠</span>
                     </p>
                     <p style="color:#f06019;">
-                      	￥{{ food.price }}
+                      	￥{{ val.price }}
                     </p>
                   </div>
                 </div>
                 <!-- 减 num 加 -->
                 <div class="control">
-                  <cart-control :food="food" :user="user"
+                  <cart-control :food="{count:val.count,dishesid:k,rcid:key}"
                     @add="add" @decrease="decrease"></cart-control>
                 </div>
               </li>
@@ -77,10 +79,15 @@
       <div class="shopcart">
         <shop-cart :selectFoods="selectFoods" ref="shopcartRef"
           @handleAdd="add" @handleDecrease="decrease"
-          @empty="empty" :user="user">
+          @empty="empty">
         </shop-cart>
       </div>
     </div>
+
+    <GeneralCart :listShow="listShow"
+      :dishesOfPerson="dishesOfPerson" @close="close"
+      @handleAdd="add" @handleDecrease="decrease">
+    </GeneralCart>
 
   </div>
 </template>
@@ -91,18 +98,18 @@ import axios from 'axios'
 import httpUrl from '@/http_url'
 import BScroll from 'better-scroll'
 import CartControl from '@/components/cart-control'
+import GeneralCart from '@/components/general-cart'
 export default {
   components: {
     ShopCart,
-    CartControl
+    CartControl,
+    GeneralCart
   },
   data () {
     return {
-      // 用户信息
-      user: {
-        nickname: '',
-        headimgurl: ''
-      },
+      dishesOfPerson: [],
+      listShow: false,
+      res: null,
       timeid: 0,
       avatarUrl: '',
       dishesName: '',
@@ -113,206 +120,173 @@ export default {
       scrollY: 0,
 
       // 菜品数据
-      foodsList: [
-        {
-          id: 1,
+      foodsList: {
+        1: {
           title: '热销',
-          list: [
-            {
-              dishesid: 1,
+          list: {
+            1: {
               name: '蒸羊羔儿',
-              count: 0,
+              count: 2,
               price: 20
             },
-            {
-              dishesid: 2,
+            2: {
               name: '蒸熊掌',
-              count: 0,
+              count: 3,
               price: 20
             },
-            {
-              dishesid: 3,
+            3: {
               name: '蒸鹿尾儿',
-              count: 0,
+              count: 6,
               price: 20
             },
-            {
-              dishesid: 4,
+            4: {
               name: '烧花鸭',
-              count: 0,
+              count: 9,
               price: 20
             },
-            {
-              dishesid: 5,
+            5: {
               name: '烧雏鸡',
-              count: 0,
+              count: 1,
               price: 20
             }
-          ]
+          }
         },
-        {
-          id: 2,
+        2: {
           title: '折扣',
-          list: [
-            {
-              dishesid: 6,
+          list: {
+            6: {
               name: '烧子鹅',
               count: 0,
               price: 20
             },
-            {
-              dishesid: 7,
+            7: {
               name: '炉猪',
               count: 0,
               price: 20
             },
-            {
-              dishesid: 8,
+            8: {
               name: '炉鸭',
               count: 0,
               price: 20
             },
-            {
-              dishesid: 9,
+            9: {
               name: '酱鸡',
               count: 0,
               price: 20
             },
-            {
-              dishesid: 10,
+            10: {
               name: '腊肉',
               count: 0,
               price: 20
             },
-            {
-              dishesid: 11,
+            11: {
               name: '松花',
               count: 0,
               price: 20
             },
-          ]
+          }
         },
-        {
-          id: 3,
+        3: {
           title: '果拼果汁',
-          list: [
-            {
-              dishesid: 12,
+          list: {
+            12: {
               name: '小肚儿',
               count: 0,
               price: 20
             },
-            {
-              dishesid: 13,
+            13: {
               name: '酱肉',
               count: 0,
               price: 20
             },
-            {
-              dishesid: 14,
+            14: {
               name: '香肠',
               count: 0,
               price: 20
             },
-            {
-              dishesid: 15,
+            15: {
               name: '什锦酥盘儿',
               count: 0,
               price: 20
             },
-            {
-              dishesid: 16,
+            16: {
               name: '熏鸡白脸儿',
               count: 0,
               price: 20
             },
-            {
-              dishesid: 17,
+            17: {
               name: '清蒸八宝猪',
               count: 0,
               price: 20
             },
-          ]
+          }
         },
-        {
-          id: 4,
+        4: {
           title: '零食',
-          list: [
-            {
-              dishesid: 18,
+          list: {
+            18: {
               name: '江米酿鸭子',
               count: 0,
               price: 20
             },
-            {
-              dishesid: 19,
+            19: {
               name: '罐儿野鸡',
               count: 0,
               price: 20
             },
-            {
-              dishesid: 20,
+            20: {
               name: '罐儿鹌鹑',
               count: 0,
               price: 20
             },
-            {
-              dishesid: 21,
+            21: {
               name: '卤什件儿',
               count: 0,
               price: 20
             },
-            {
-              dishesid: 22,
+            22: {
               name: '卤子鹅',
               count: 0,
               price: 20
             }
-          ]
+          }
         },
-        {
-          id: 5,
+        5: {
           title: '主食',
-          list: [
-            {
-              dishesid: 23,
+          list: {
+            23: {
               name: '山鸡',
               count: 0,
               price: 20
             },
-            {
-              dishesid: 24,
+            24: {
               name: '兔脯',
               count: 0,
               price: 20
             },
-            {
-              dishesid: 25,
+            25: {
               name: '莱蟒',
               count: 0,
               price: 20
             },
-            {
-              dishesid: 26,
+            26: {
               name: '银鱼',
               count: 0,
               price: 20
             },
-            {
-              dishesid: 27,
+            27: {
               name: '清蒸哈什蚂',
               count: 0,
               price: 20
             },
-            {
-              dishesid: 28,
+            28: {
               name: '烩鸭腰儿',
               count: 0,
               price: 20
             }
-          ]
+          }
         }
-      ]
+      }
     }
   },
   filters: {
@@ -320,9 +294,9 @@ export default {
     // 返回菜品数量的和
     handleGetSum (list) {
       let n = 0
-      list.forEach(food => {
-        n += food.count
-      })
+      for (let key in list) {
+        n += list[key].count
+      }
       return n
     }
   },
@@ -340,17 +314,21 @@ export default {
       return 0
     },
 
-    // 监听 foodsList 的变化,
     // 把已点的菜品信息传给 shop-cart
     selectFoods () {
       let select = []
-      this.foodsList.forEach((good) => {
-        good.list.forEach((food) => {
-          if (food.count) {
+      for (let key in this.foodsList) {
+        for (let k in this.foodsList[key].list) {
+          if (this.foodsList[key].list[k].count > 0) {
+            let food = {
+              value: this.foodsList[key].list[k],
+              dishesid: k,
+              rcid: key
+            }
             select.push(food)
           }
-        })
-      })
+        }
+      }
       return select
     },
 
@@ -361,13 +339,10 @@ export default {
       } else {
         return false
       }
-    }
+    },
+
   },
   created () {
-    // 获取用户信息, 用于传值给 shop-cart 和 cart-control
-    this.user.nickname = sessionStorage.getItem('nickname')
-    this.user.headimgurl = sessionStorage.getItem('headimgurl')
-
     // 初始化 foodsList
     this.initWebSocket()
   },
@@ -380,120 +355,162 @@ export default {
     // 是否显示左侧栏目菜品数量
     IsShowCount (list) {
       let n = 0
-      list.forEach(food => {
-        n += food.count
-      })
+      for (let key in list) {
+        n += list[key].count
+      }
       return n > 0 ? true : false
     },
 
     // websocket
     add (data) {
+      if (this.listShow) {
+        // general-cart
+        this.dishesOfPerson.forEach((dish, index) => {
+          if (dish.headimgurl === data.data.headimgurl) {
+            dish.food.count += 1
+          }
+        })
+      }
       this.websocketsend(JSON.stringify(data))
     },
     decrease (data) {
-      this.websocketsend(JSON.stringify(data))
+
+      if (this.listShow) {
+
+        // general-cart
+        this.dishesOfPerson.forEach((dish, index) => {
+          if (dish.headimgurl === data.data.headimgurl) {
+            dish.food.count -= 1
+            if (dish.food.count === 0) {
+              this.dishesOfPerson.splice(index,1)
+            }
+          }
+        })
+
+        // 总数据
+        this.websocketsend(JSON.stringify(data))
+      } else {
+        // -------------------------
+        // 判断当前这个菜有几个人点
+        let arr = []
+        for (let rcid in this.res.data.categories) {
+          // 当一个人点的菜数量为0时, 就删除此项
+          for (let key in this.res.data.categories[rcid]) {
+            if (this.res.data.categories[rcid][key].count === 0) {
+              delete this.res.data.categories[rcid][key]
+            }
+          }
+
+          // 获取一个 categories 下的所有对象的 keys 集合
+          let keys = Object.keys(this.res.data.categories[rcid])
+          // 获取 dishesid 的集合
+          keys.forEach(item => {
+            arr.push(Number(item.split(",")[0]))
+          })
+        }
+
+        // 获取点当前这个菜的集合
+        let tmpArr = arr.filter((item) => {
+          return item === Number(data.data.dishesid)
+        })
+
+        // 当前这个菜是多人点的菜
+        if (tmpArr.length > 1) {
+          // 找到所有点当前这个菜的所有人
+          for (let rcid in this.res.data.categories) {
+            for (let key in this.res.data.categories[rcid]) {
+              let dishesid = Number(key.split(",")[0])
+              let openid = key.split(",")[1]
+              if (dishesid === Number(data.data.dishesid)) {
+                let food = {}
+                food.count = this.res.data.categories[rcid][key].count
+                food.dishesid = Number(data.data.dishesid)
+                food.rcid = rcid
+
+                let obj = {}
+                obj.food = food
+                obj.name = this.foodsList[rcid].list[dishesid].name
+                obj.headimgurl = this.res.data.persons[openid].headimgurl
+
+                this.dishesOfPerson.push(obj)
+              }
+            }
+          }
+
+          // 弹窗
+          this.listShow = true
+
+
+        } else {
+          // 当前菜是单人点的菜, 直接 -1
+          this.websocketsend(JSON.stringify(data))
+        }
+        // -------------------------
+      }
+
+
+
     },
+
+    // 清空购物车
     empty (data) {
       this.websocketsend(JSON.stringify(data))
     },
 
     // 初始化weosocket
     initWebSocket () {
-      // let tableid = sessionStorage.getItem('tableid')
-      // const wsurl = 'wss://' + location.hostname
-      //   + '/pzcatering-web/ws/dish.do?' + tableid
-      const wsurl = 'ws:192.168.1.119:8081/pzcatering-web/ws/dish.do?1'
-
+      const wsurl = httpUrl.getWsurl
       this.websock = new WebSocket(wsurl)
       this.websock.onmessage = this.websocketonmessage
-      this.websock.onerror = this.websocketonerror
-      this.websock.onclose = this.websocketclose
+      // this.websock.onerror = this.websocketonerror
+      // this.websock.onclose = this.websocketclose
     },
 
     // 接收数据
     websocketonmessage (e) {
-      /*
-       * type 为 0 时,
-       * 新用户进入后要同步服务器信息（其他用户的信息）
-       * type 为 1 时,
-       * 用户点菜后, 更新全部信息, 显示个人点菜信息提示
-       * type 为 2 时,
-       * 清空所有菜品数量
-       */
-      let res = JSON.parse(e.data)
+      this.res = JSON.parse(e.data)
+      console.log(this.res)
 
-      if (res.type === 0) {
+      // type:0 同步, type:1 清空
+      if (this.res.type === 0) {
 
-        if (res.data.length !== 0) {
-
-          this.foodsList.forEach(good => {
-            good.list.forEach(food => {
-              res.data.forEach(item => {
-                item.dishes.forEach(dish => {
-                  if (food.dishesid === dish.dishesid) {
-                    food.count = dish.count
-                  }
-                })
-              })
-            })
-          })
-
-        }
-        console.log('同步成功')
-
-      } else if (res.type === 1) {
-
-        /*
-         * type 为 1 时, 包含一个数组一个对象,
-         * 数组: res.data.allDishes (所有人点的所有菜品信息)
-         * 对象: res.data.newDish (个人的点菜信息)
-         */
-        this.foodsList.forEach(good => {
-          good.list.forEach(food => {
-
-            // 更新全部信息
-            food.count = 0
-            res.data.allDishes.forEach(item => {
-              item.dishes.forEach(dish => {
-                if (food.dishesid === dish.dishesid) {
-                  food.count += dish.count
-                }
-              })
-            })
-
-            // 显示个人点菜信息提示
-            if (food.dishesid === res.data.newDish.dishesid) {
-              this.dishesName = food.name
-              // if (typeof(Storage) !== "undefined") {
-              //   if (sessionStorage.headimgurl) {
-              //     this.avatarUrl = sessionStorage.headimgurl
-              //   } else {
-              //     this.avatarUrl = res.data.newDish.headimgurl
-              //     sessionStorage.headimgurl = res.data.newDish.headimgurl
-              //   }
-              // } else {
-              // 	console.log("抱歉，您的浏览器不支持 web 存储")
-              // }
-              this.avatarUrl = res.data.newDish.headimgurl
-              this.dishesCount = res.data.newDish.count
-              this.$notice(this.avatarUrl, this.dishesName, this.dishesCount)
+        // 同步所有菜品数据
+        this.clearAllDishesCount()
+        if (this.res.data) {
+          for (let rcid in this.res.data.categories) {
+            for (let key in this.res.data.categories[rcid]) {
+              let dishesid = key.split(",")[0]
+              let count = this.res.data.categories[rcid][key].count
+              this.foodsList[rcid].list[dishesid].count += count
             }
+          }
+          console.log("数据已接收...")
 
-          })
-        })
-        console.log("数据已接收...")
+          // 如果有 newDish, 则弹窗头像提示框
+          if (this.res.data.newDish) {
+            let rcid = this.res.data.newDish.rcid
+            let dishesid = this.res.data.newDish.dishesid
+            this.dishesName = this.foodsList[rcid].list[dishesid].name
+            this.avatarUrl = this.res.data.newDish.headimgurl
+            this.dishesCount = this.res.data.newDish.count
+            this.$notice(this.avatarUrl, this.dishesName, this.dishesCount)
+          }
+        }
 
-      } else if (res.type === 2) {
-
-        this.foodsList.forEach(good => {
-          good.list.forEach(food => {
-            food.count = 0
-          })
-        })
+      } else if (this.res.type === 1) {
+        this.clearAllDishesCount()
         console.log("数据已清空!")
-
       }
 
+    },
+
+    // 所有菜品数量清0
+    clearAllDishesCount () {
+      for (let key in this.foodsList) {
+        for (let k in this.foodsList[key].list) {
+          this.foodsList[key].list[k].count = 0
+        }
+      }
     },
 
     // 发送数据
@@ -508,7 +525,6 @@ export default {
         this.initWebSocket()
       }, 5000)
       console.log("通信发生错误...")
-      // console.log(e)
     },
 
     // 关闭
@@ -517,7 +533,6 @@ export default {
         this.initWebSocket()
       }, 5000)
       console.log("连接已关闭...")
-      // console.log(e)
     },
 
     /*
@@ -559,15 +574,13 @@ export default {
         height += foodList[i].clientHeight
         this.listHeight.push(height)
       }
-    }
+    },
 
-    // 小球掉落动画
-    // drop (target) {
-    //   // 性能优化，异步异步执行下落动画
-    //   this.$nextTick(() => {
-    //     this.$refs.shopcartRef.drop(target)
-    //   })
-    // }
+    // 关闭 general-cart, 并清空 dishOfPerson
+    close () {
+      this.listShow = false
+      this.dishesOfPerson.splice(0,this.dishesOfPerson.length)
+    }
 
   }
 }
@@ -696,7 +709,7 @@ export default {
   align-items: center;
 }
 .food-left span {
-  position: fixed;
+  position: absolute;
   z-index: 1;
   color: #d2d2d2;
   font-size: 14px;
@@ -741,9 +754,6 @@ export default {
   align-items: center;
 }
 .big-show .food-left span {
-  position: fixed;
-  z-index: 1;
-  color: #d2d2d2;
   font-size: 20px;
 }
 .big-show .food-left img {
