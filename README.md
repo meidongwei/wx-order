@@ -1,23 +1,26 @@
 # wx-order
-
 -------------------------
-cart-control.vue
-
-data -> openid: ''
-
-created () {
-  sessionStorage
+let categories = {
+  1: {
+    '1,abc': {count: 0},
+    '2,abc': {count: 1},
+    '1,ccc': {count: 1}
+  },
+  2: {
+    '6,abc': {count: 1},
+    '6,ccc': {count: 1}
+  }
 }
+-------------------------
+start.vue
 
-add()
-decrease()
+getUserInfo()
 -------------------------
 httpUrl.js
 -------------------------
 index.vue
-initWebSocket
--------------------------
-start.vue
 
-setTimeout
+data 中的 res 数据
+
+initWebSocket
 -------------------------

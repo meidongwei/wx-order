@@ -67,7 +67,8 @@
                 <!-- 减 num 加 -->
                 <div class="control">
                   <cart-control :food="{count:val.count,dishesid:k,rcid:key}"
-                    @add="add" @decrease="decrease"></cart-control>
+                    @add="add" @decrease="decrease">
+                  </cart-control>
                 </div>
               </li>
             </ul>
@@ -78,13 +79,15 @@
       <!-- 购物车 -->
       <div class="shopcart">
         <shop-cart :selectFoods="selectFoods" ref="shopcartRef"
+          :foodsList="foodsList" :persons="persons"
+          @isShowShopCart="isShowShopCartMethod"
           @handleAdd="add" @handleDecrease="decrease"
           @empty="empty">
         </shop-cart>
       </div>
     </div>
 
-    <GeneralCart :listShow="listShow"
+    <GeneralCart :isShowGeneralCart="isShowGeneralCart"
       :dishesOfPerson="dishesOfPerson" @close="close"
       @handleAdd="add" @handleDecrease="decrease">
     </GeneralCart>
@@ -108,8 +111,26 @@ export default {
   data () {
     return {
       dishesOfPerson: [],
-      listShow: false,
-      res: null,
+      isShowShopCart: false,
+      isShowGeneralCart: false,
+      res: {
+        // data: {
+        //   categories: {
+        //     1: {
+        //       '1,1': {count: 2},
+        //       '2,2': {count: 3}
+        //     },
+        //     2: {
+        //       '6,1': {count: 1},
+        //       '6,2': {count: 1}
+        //     }
+        //   },
+        //   persons: {
+        //     '1': {headimgurl: 'https://thirdwx.qlogo.cn/mmopen/vi_32/PiajxSqBRaELImyOUmrVjSb9ic27KVibGasR3xuMRmZGbO4VYueopgOACYwuI2jgGX7w6aaXYPf5G9uqmLniczGnvQ/132'},
+        //     '2': {headimgurl: 'https://user-gold-cdn.xitu.io/2018/5/3/1632417db7b0efd0?imageView2/1/w/100/h/100/q/85/format/webp/interlace/1'}
+        //   }
+        // }
+      },
       timeid: 0,
       avatarUrl: '',
       dishesName: '',
@@ -126,27 +147,27 @@ export default {
           list: {
             1: {
               name: '蒸羊羔儿',
-              count: 2,
+              count: 0,
               price: 20
             },
             2: {
               name: '蒸熊掌',
-              count: 3,
+              count: 0,
               price: 20
             },
             3: {
               name: '蒸鹿尾儿',
-              count: 6,
+              count: 0,
               price: 20
             },
             4: {
               name: '烧花鸭',
-              count: 9,
+              count: 0,
               price: 20
             },
             5: {
               name: '烧雏鸡',
-              count: 1,
+              count: 0,
               price: 20
             }
           }
@@ -316,20 +337,25 @@ export default {
 
     // 把已点的菜品信息传给 shop-cart
     selectFoods () {
-      let select = []
-      for (let key in this.foodsList) {
-        for (let k in this.foodsList[key].list) {
-          if (this.foodsList[key].list[k].count > 0) {
-            let food = {
-              value: this.foodsList[key].list[k],
-              dishesid: k,
-              rcid: key
+      // 当一个人清空购物车时, 服务器返回 res: {type:1},
+      // 所以要判断 res 中是否有 data
+      if (this.res.data) {
+        for (let rcid in this.res.data.categories) {
+          // 当一个人点的菜数量为0时, 就删除此项
+          for (let key in this.res.data.categories[rcid]) {
+            if (this.res.data.categories[rcid][key].count === 0) {
+              delete this.res.data.categories[rcid][key]
             }
-            select.push(food)
           }
         }
+        return this.res.data.categories
       }
-      return select
+    },
+
+    persons () {
+      if (this.res.data) {
+        return this.res.data.persons
+      }
     },
 
     // 监听 scrollY < 200 时, 显示大图模块
@@ -351,6 +377,9 @@ export default {
     this._calcHeight()
   },
   methods: {
+    isShowShopCartMethod (data) {
+      this.isShowShopCart = data
+    },
 
     // 是否显示左侧栏目菜品数量
     IsShowCount (list) {
@@ -363,33 +392,42 @@ export default {
 
     // websocket
     add (data) {
-      if (this.listShow) {
-        // general-cart
-        this.dishesOfPerson.forEach((dish, index) => {
-          if (dish.headimgurl === data.data.headimgurl) {
+      if (this.isShowShopCart) {
+        // 购物车订单页点击+
+        this.websocketsend(JSON.stringify(data))
+      } else if (this.isShowGeneralCart) {
+        // 筛选菜品页上点击+
+        this.websocketsend(JSON.stringify(data))
+        // 更新 dishesOfPerson
+        this.dishesOfPerson.forEach(dish => {
+          if (dish.food.openid === data.data.openid) {
             dish.food.count += 1
           }
         })
+      } else {
+        // 主页上点击+
+        data.data.openid = sessionStorage.getItem('openid')
+        this.websocketsend(JSON.stringify(data))
       }
-      this.websocketsend(JSON.stringify(data))
     },
     decrease (data) {
-
-      if (this.listShow) {
-
-        // general-cart
+      if (this.isShowShopCart) {
+        // 购物车订单页点击-
+        this.websocketsend(JSON.stringify(data))
+      } else if (this.isShowGeneralCart) {
+        // 筛选菜品页上点击-
+        this.websocketsend(JSON.stringify(data))
+        // 更新 dishesOfPerson
         this.dishesOfPerson.forEach((dish, index) => {
-          if (dish.headimgurl === data.data.headimgurl) {
+          if (dish.food.openid === data.data.openid) {
             dish.food.count -= 1
             if (dish.food.count === 0) {
-              this.dishesOfPerson.splice(index,1)
+              this.dishesOfPerson.splice(index, 1)
             }
           }
         })
-
-        // 总数据
-        this.websocketsend(JSON.stringify(data))
       } else {
+        // 主页上点击-
         // -------------------------
         // 判断当前这个菜有几个人点
         let arr = []
@@ -400,7 +438,6 @@ export default {
               delete this.res.data.categories[rcid][key]
             }
           }
-
           // 获取一个 categories 下的所有对象的 keys 集合
           let keys = Object.keys(this.res.data.categories[rcid])
           // 获取 dishesid 的集合
@@ -417,6 +454,7 @@ export default {
         // 当前这个菜是多人点的菜
         if (tmpArr.length > 1) {
           // 找到所有点当前这个菜的所有人
+          this.dishesOfPerson.splice(0,this.dishesOfPerson.length)
           for (let rcid in this.res.data.categories) {
             for (let key in this.res.data.categories[rcid]) {
               let dishesid = Number(key.split(",")[0])
@@ -426,6 +464,7 @@ export default {
                 food.count = this.res.data.categories[rcid][key].count
                 food.dishesid = Number(data.data.dishesid)
                 food.rcid = rcid
+                food.openid = openid
 
                 let obj = {}
                 obj.food = food
@@ -436,18 +475,20 @@ export default {
               }
             }
           }
-
           // 弹窗
-          this.listShow = true
-
-
+          this.isShowGeneralCart = true
         } else {
-          // 当前菜是单人点的菜, 直接 -1
+          // 当前菜是单人点的菜
+          for (let rcid in this.res.data.categories) {
+            for (let key in this.res.data.categories[rcid]) {
+              let openid = key.split(",")[1]
+              data.data.openid = openid
+            }
+          }
           this.websocketsend(JSON.stringify(data))
         }
         // -------------------------
       }
-
 
 
     },
@@ -462,14 +503,13 @@ export default {
       const wsurl = httpUrl.getWsurl
       this.websock = new WebSocket(wsurl)
       this.websock.onmessage = this.websocketonmessage
-      // this.websock.onerror = this.websocketonerror
-      // this.websock.onclose = this.websocketclose
+      this.websock.onerror = this.websocketonerror
+      this.websock.onclose = this.websocketclose
     },
 
     // 接收数据
     websocketonmessage (e) {
       this.res = JSON.parse(e.data)
-      console.log(this.res)
 
       // type:0 同步, type:1 清空
       if (this.res.type === 0) {
@@ -535,12 +575,9 @@ export default {
       console.log("连接已关闭...")
     },
 
-    /*
-     * better-scroll 默认会阻止浏览器的原生 click 事件。
-     * 当设置为 true，better-scroll 会派发一个 click 事件
-     * 我们会给派发的 event 参数加一个私有属性 _constructed，值为 true
-     */
+    // 点击左侧类别, 右侧滑动到对应位置
     selectMenu (index, event) {
+      // better-scroll 默认会阻止浏览器的原生 click 事件。
       // 解决PC端响应两次点击事件的问题
       if (!event._constructed) {
         return
@@ -578,8 +615,7 @@ export default {
 
     // 关闭 general-cart, 并清空 dishOfPerson
     close () {
-      this.listShow = false
-      this.dishesOfPerson.splice(0,this.dishesOfPerson.length)
+      this.isShowGeneralCart = false
     }
 
   }
@@ -668,7 +704,6 @@ export default {
   font-weight: 700;
   color: #fff;
   background-color: #f01414;
-  /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4); */
   text-align: center;
 }
 

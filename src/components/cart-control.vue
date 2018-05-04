@@ -22,8 +22,8 @@
 export default {
   data () {
     return {
-      openid: 'abc',
-      headimgurl: 'kkk'
+      openid: '',
+      headimgurl: ''
     }
   },
   props: {
@@ -38,8 +38,8 @@ export default {
     }
   },
   created () {
-    // this.openid = sessionStorage.getItem('openid')
-    // this.headimgurl = sessionStorage.getItem('headimgurl')
+    this.openid = sessionStorage.getItem('openid')
+    this.headimgurl = sessionStorage.getItem('headimgurl')
   },
   methods: {
     decrease (event) {
@@ -47,12 +47,11 @@ export default {
       if (!event._constructed) {
         return
       }
-      // let n = parseInt(Math.random()*100)
-      // this.openid = this.openid + n
+
       let data = {
         type: 0,
         data: {
-          openid: this.openid,
+          openid: this.food.openid,
           headimgurl: this.headimgurl,
           rcid: this.food.rcid,
           dishesid: this.food.dishesid,
@@ -66,12 +65,11 @@ export default {
       if (!event._constructed) {
         return
       }
-      // let n = parseInt(Math.random()*100)
-      // this.openid = this.openid + n
+
       let data = {
         type: 0,
         data: {
-          openid: this.openid,
+          openid: this.food.openid,
           headimgurl: this.headimgurl,
           rcid: this.food.rcid,
           dishesid: this.food.dishesid,

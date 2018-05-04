@@ -1,17 +1,17 @@
 <template>
   <div>
     <transition name="fold">
-      <div class="shopcart-list" v-show="listShow">
+      <div class="shopcart-list" v-show="isShowGeneralCart">
         <div class="list-header">
-          <h1 class="title">标题123</h1>
-          <span class="empty" @click="close">关闭</span>
+          <h1 class="title">你想筛选哪个菜？</h1>
+          <span class="empty" @click="hideList">关闭</span>
         </div>
 
         <div class="list-content" ref="listContentRef">
           <div>
             <ul>
               <li class="food" v-for="item in dishesOfPerson">
-                <span>
+                <span class="headimgurl">
                   <img :src="item.headimgurl">
                 </span>
                 <span>{{ item.name }}</span>
@@ -30,7 +30,7 @@
 
     <!-- 模糊背景 -->
     <div class="background" @click="hideList"
-      v-show="listShow"></div>
+      v-show="isShowGeneralCart"></div>
   </div>
 </template>
 
@@ -49,7 +49,7 @@ export default {
     dishesOfPerson: {
       type: Array
     },
-    listShow: {
+    isShowGeneralCart: {
       type: Boolean
     }
   },
@@ -58,10 +58,15 @@ export default {
   created () {
   },
   watch: {
-    listShow: function (val) {
+    dishesOfPerson: function (val) {
+      if (val.length === 0) {
+        this.hideList()
+      }
+    },
+    isShowGeneralCart: function (val) {
       if (val) {
         // 初始化 better-scroll
-        if (this.listShow) {
+        if (this.isShowGeneralCart) {
           // setTimeout
           this.$nextTick(() => {
             if (!this.scroll) {
@@ -79,16 +84,11 @@ export default {
   methods: {
     add (data) {
       this.$emit('handleAdd', data)
-      // console.log('add')
     },
     decrease (data) {
       this.$emit('handleDecrease', data)
-      // console.log('decrease')
     },
     hideList () {
-      this.$emit('close')
-    },
-    close () {
       this.$emit('close')
     }
   }
@@ -146,6 +146,13 @@ export default {
   padding: 8px 0;
   box-sizing: border-box;
   position: relative;
+}
+.list-content .headimgurl {
+  width: 35px;
+  height: 35px;
+}
+.list-content .headimgurl img {
+  width: 100%;
 }
 .list-content .food::after {
   content: '';

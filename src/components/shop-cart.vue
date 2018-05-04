@@ -16,12 +16,12 @@
             <div class="price" :class="{'priceLight':totalCount > 0}">
               ￥{{ totalPrice }}
             </div>
-            <div class="desc">另需配送费 {{ deliveryPrice }} 元</div>
+            <div class="desc">3人用餐（另需5元餐盒费）</div>
           </div>
         </div>
         <div class="right" @click.stop="pay">
           <div class="pay"
-            :class="{'payLight': this.totalPrice >= this.minPrice}">
+            :class="{'payLight': this.totalPrice > 0}">
             {{ payDesc }}
           </div>
         </div>
@@ -29,29 +29,42 @@
 
       <!-- 购物车列表 -->
       <transition name="fold">
-        <div class="shopcart-list" v-show="listShow">
+        <div class="shopcart-list" v-show="isShowShopCart">
           <div class="list-header">
             <h1 class="title">购物车</h1>
             <span class="empty" @click="empty">清空</span>
           </div>
 
           <div class="list-content" ref="listContentRef">
-            <ul>
-              <li class="food" v-for="food in selectFoods">
-                <span class="name">{{ food.value.name }}</span>
-
-                <div>
-                  <div class="price">
-                    <span>￥{{ food.value.price * food.value.count }}</span>
-                  </div>
-
-                  <div class="control">
-                    <cart-control :food="food"
-                      @add="add" @decrease="decrease"></cart-control>
-                  </div>
+            <div>
+              <ul v-for="(value, key) in selectFoods" v-if="isShowTitle(value)">
+                <div class="title" >
+                  {{ foodsList[key].title }}
                 </div>
-              </li>
-            </ul>
+                <li class="food" v-for="(val, k) in value">
+                  <span class="headimgurl">
+                    <img :src="getimgurl(k.split(',')[1])">
+                  </span>
+                  <span class="name">{{ foodsList[key].list[k.split(",")[0]].name }}</span>
+                  <div>
+                    <div class="price">
+                      <span>￥{{ foodsList[key].list[k.split(",")[0]].price }}</span>
+                    </div>
+
+                    <div class="control">
+                      <cart-control :food="{
+                          count: val.count,
+                          dishesid: k.split(',')[0],
+                          rcid: key,
+                          openid: k.split(',')[1]
+                        }"
+                        @add="add" @decrease="decrease">
+                      </cart-control>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </div>
 
         </div>
@@ -60,7 +73,7 @@
 
     <!-- 模糊背景 -->
     <div class="background" @click="hideList"
-      v-show="listShow"></div>
+      v-show="isShowShopCart"></div>
   </div>
 </template>
 
@@ -74,50 +87,54 @@ export default {
   data () {
     return {
       // 购物车列表是否折叠
-      listShow: false
+      isShowShopCart: false
     }
   },
   props: {
     // 加入购物车的商品
     selectFoods: {
-      type: Array
+      type: Object
     },
-    // 配送费
-    deliveryPrice: {
-      type: Number,
-      default: 0
+    foodsList: {
+      type: Object
     },
-    // 起送费
-    minPrice: {
-      type: Number,
-      default: 20
+    persons: {
+      type: Object
     }
   },
   computed: {
     // 所选商品总价
     totalPrice () {
       let total = 0
-      this.selectFoods.forEach(food => {
-        total += food.value.price * food.value.count
-      })
+      for (let rcid in this.selectFoods) {
+        for (let key in this.selectFoods[rcid]) {
+          let dishesid = key.split(',')[0]
+          let price = this.foodsList[rcid].list[dishesid].price
+          total += this.selectFoods[rcid][key].count * price
+        }
+      }
       return total
     },
     // 所选商品总数量
     totalCount () {
       let total = 0
-      this.selectFoods.forEach(food => {
-        total += food.value.count
-      })
+      for (let rcid in this.selectFoods) {
+        for (let key in this.selectFoods[rcid]) {
+          total += this.selectFoods[rcid][key].count
+        }
+      }
       return total
     },
-    // 20元起送 、 还差10元起送 、 去结算
+    // 去结算
     payDesc () {
-      if (this.totalPrice === 0) {
-        return `${this.minPrice}元起送`
-      } else if (this.totalPrice < this.minPrice) {
-        return `还差${this.minPrice - this.totalPrice}元起送`
+      if (this.totalPrice <= 0) {
+        return '请选菜'
       } else {
-        return '去结算'
+        if (this.isShowShopCart) {
+          return '提交订单'
+        } else {
+          return '选好了'
+        }
       }
     }
   },
@@ -125,7 +142,7 @@ export default {
     // 购物车商品数量为0时,关闭购物车列表
     totalCount: function (val) {
       if (val === 0) {
-        this.listShow = false
+        this.isShowShopCart = false
       }
     }
   },
@@ -140,9 +157,12 @@ export default {
       if (!this.totalCount) {
         return
       }
-      this.listShow = !this.listShow
+      this.isShowShopCart = !this.isShowShopCart
+
+      this.$emit('isShowShopCart', this.isShowShopCart)
+
       // 初始化 better-scroll
-      if (this.listShow) {
+      if (this.isShowShopCart) {
         // setTimeout
         this.$nextTick(() => {
           if (!this.scroll) {
@@ -155,22 +175,50 @@ export default {
         }, 20)
       }
     },
+
     // 支付
     pay () {
-      if (this.totalPrice < this.minPrice) {
+      if (this.totalPrice <= 0) {
+        return
+      }
+      if (this.payDesc === '选好了') {
+        this.isShowShopCart = true
+        return
+      }
+      if (this.payDesc === '提交订单') {
+        alert('跳转到订单页')
         return
       }
     },
     empty () {
-      this.selectFoods.forEach((food) => {
-        food.count = 0
-      })
       this.$emit('empty', { type: 1 })
-      this.listShow = false
+      this.isShowShopCart = false
+      this.$emit('isShowShopCart', this.isShowShopCart)
     },
     hideList () {
-      this.listShow = false
+      this.isShowShopCart = false
+    },
+
+    getimgurl (openid) {
+      for (let opid in this.persons) {
+        if (opid === openid) {
+          return this.persons[opid].headimgurl
+        }
+      }
+    },
+
+    isShowTitle (sel) {
+      let n = 0
+      for (let key in sel) {
+        n += sel[key].count
+      }
+      if (n > 0) {
+        return true
+      } else {
+        return false
+      }
     }
+
   }
 }
 </script>
@@ -314,13 +362,20 @@ export default {
   }
   .shopcart-list .list-content {
     /* max-height: 300px; */
-    max-height: calc(100vh - 90px);
+    /* max-height: calc(100vh - 90px); */
+    height: calc(100vh - 90px);
     padding: 0 18px;
     background-color: #fff;
     overflow: hidden;
   }
-  .shopcart-list .list-content ul {
-    padding-bottom: 20px;
+  .list-content > div {
+    padding-bottom: 100px;
+  }
+  .list-content .title {
+    text-align: left;
+    font-size: 14px;
+    color: #939393;
+    padding: 15px 0 5px 0;
   }
   .list-content .food {
     display: flex;
@@ -344,8 +399,30 @@ export default {
     -webkit-transform: scaleY(0.5);
     transform: scaleY(0.5);
   }
-  .list-content .food:first-child::after {
-    border: 0;
+  .list-content ul {
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .list-content .headimgurl {
+    width: 35px;
+    height: 35px;
+  }
+  .list-content .headimgurl img {
+    width: 100%;
+  }
+  .list-content ul::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: 1px;
+    border-top: 1px solid #f5f5f5;
+    color: #f5f5f5;
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
+    -webkit-transform: scaleY(0.5);
+    transform: scaleY(0.5);
   }
   .list-content .food > div {
     display: flex;
