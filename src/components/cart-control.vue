@@ -29,6 +29,7 @@ export default {
   props: {
     // 操作哪个商品
     // food: {
+    //   openid: 1,
     //   count: 20,
     //   dishesid: 1,
     //   rcid: 1
@@ -114,23 +115,23 @@ export default {
 .move-leave-active {
   opacity: 1;
   transform: translate3d(0, 0, 0);
-  transition: all .4s;
+  transition: all .3s;
 }
 .move-enter-active i,
 .move-leave-active i {
   transform: rotate(0);
-  transition: all .4s;
+  transition: all .3s;
 }
 
 .move-enter,
 .move-leave-to {
   opacity: 0;
   transform: translate3d(24px, 0, 0);
-  transition: all .4s;
+  transition: all .3s;
 }
 .move-enter i,
 .move-leave-to i {
   transform: rotate(360deg);
-  transition: all .4s;
+  transition: all .3s;
 }
 </style>

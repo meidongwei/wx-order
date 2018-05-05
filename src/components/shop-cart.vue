@@ -37,7 +37,8 @@
 
           <div class="list-content" ref="listContentRef">
             <div>
-              <ul v-for="(value, key) in selectFoods" v-if="isShowTitle(value)">
+              <ul v-for="(value, key) in selectFoods">
+                <!-- v-if="isShowTitle(value)" -->
                 <div class="title" >
                   {{ foodsList[key].title }}
                 </div>
@@ -143,6 +144,7 @@ export default {
     totalCount: function (val) {
       if (val === 0) {
         this.isShowShopCart = false
+        this.$emit('isShowShopCart', this.isShowShopCart)
       }
     }
   },
@@ -158,7 +160,6 @@ export default {
         return
       }
       this.isShowShopCart = !this.isShowShopCart
-
       this.$emit('isShowShopCart', this.isShowShopCart)
 
       // 初始化 better-scroll
@@ -197,6 +198,7 @@ export default {
     },
     hideList () {
       this.isShowShopCart = false
+      this.$emit('isShowShopCart', this.isShowShopCart)
     },
 
     getimgurl (openid) {
@@ -207,17 +209,17 @@ export default {
       }
     },
 
-    isShowTitle (sel) {
-      let n = 0
-      for (let key in sel) {
-        n += sel[key].count
-      }
-      if (n > 0) {
-        return true
-      } else {
-        return false
-      }
-    }
+    // isShowTitle (sel) {
+    //   let n = 0
+    //   for (let key in sel) {
+    //     n += sel[key].count
+    //   }
+    //   if (n > 0) {
+    //     return true
+    //   } else {
+    //     return false
+    //   }
+    // }
 
   }
 }

@@ -8,7 +8,7 @@
       <div class="header">
         <div class="logo-con">
           <img class="store" :src="tableimgurl">
-          <p>台卡: {{ tableno }}</p>
+          <p>台卡: {{ tableid }}</p>
         </div>
         <div class="more">
           <a href="javascript:;" class="avatar">
@@ -19,7 +19,7 @@
 
       <div class="welcome">
         <p class="nickname">{{ nickname }}</p>
-        <p>欢迎光临, 客观您几位?</p>
+        <p>欢迎光临, 客观您几位呢</p>
       </div>
 
       <div class="con">
@@ -65,7 +65,7 @@ export default {
       openid: '',
       nickname: '',
       headimgurl: '',
-      tableno: '',
+      tableid: '',
       tableimgurl: '/pzcatering-web/images/daxia.jpeg',
       btnList: [
         { id: 1, name: '堂食' },
@@ -101,13 +101,13 @@ export default {
       //   {
       //     nickname: 'Arif',
       //     headimgurl: 'https://thirdwx.qlogo.cn/mmopen/vi_32/PiajxSqBRaELImyOUmrVjSb9ic27KVibGasR3xuMRmZGbO4VYueopgOACYwuI2jgGX7w6aaXYPf5G9uqmLniczGnvQ/132',
-      //     tableno: 8,
+      //     tableid: 8,
       //     openid: 1
       //   },
       //   {
       //     nickname: 'Bob',
       //     headimgurl: 'https://user-gold-cdn.xitu.io/2018/5/3/1632417db7b0efd0?imageView2/1/w/100/h/100/q/85/format/webp/interlace/1',
-      //     tableno: 8,
+      //     tableid: 8,
       //     openid: 2
       //   }
       // ]
@@ -115,7 +115,7 @@ export default {
       // let user = userList[index]
       // this.nickname = user.nickname
       // this.headimgurl = user.headimgurl
-      // this.tableno = user.tableno
+      // this.tableid = user.tableid
       // this.openid = user.openid
       // this.tableimgurl = 'https://user-gold-cdn.xitu.io/2018/4/1/1627ec0f75ce9f31?imageView2/1/w/120/h/120/q/85/format/webp/interlace/1'
       // sessionStorage.nickname = this.nickname

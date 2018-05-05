@@ -14,6 +14,7 @@
 
     <!-- 头像提示组件会挂在到 id 为 cc 的 dom 中 -->
     <div id="cc" style="display:flex;">
+
       <!-- 左侧列表 -->
       <div class="menu-wrapper" ref="menuRef">
         <ul>
@@ -66,7 +67,11 @@
                 </div>
                 <!-- 减 num 加 -->
                 <div class="control">
-                  <cart-control :food="{count:val.count,dishesid:k,rcid:key}"
+                  <cart-control :food="{
+                      count: val.count,
+                      dishesid: k,
+                      rcid: key
+                    }"
                     @add="add" @decrease="decrease">
                   </cart-control>
                 </div>
@@ -78,15 +83,17 @@
 
       <!-- 购物车 -->
       <div class="shopcart">
-        <shop-cart :selectFoods="selectFoods" ref="shopcartRef"
+        <shop-cart :selectFoods="categoriesComputed" ref="shopcartRef"
           :foodsList="foodsList" :persons="persons"
           @isShowShopCart="isShowShopCartMethod"
           @handleAdd="add" @handleDecrease="decrease"
           @empty="empty">
         </shop-cart>
       </div>
+
     </div>
 
+    <!-- 筛选菜品面板 -->
     <GeneralCart :isShowGeneralCart="isShowGeneralCart"
       :dishesOfPerson="dishesOfPerson" @close="close"
       @handleAdd="add" @handleDecrease="decrease">
@@ -139,7 +146,6 @@ export default {
       listHeight: [],
       // 计算当前滚动的 Y 值
       scrollY: 0,
-
       // 菜品数据
       foodsList: {
         1: {
@@ -322,6 +328,7 @@ export default {
     }
   },
   computed: {
+
     // 监听右侧滚动值, 实时显示左侧类别
     currentIndex () {
       for (let i = 0; i < this.listHeight.length; i++) {
@@ -335,24 +342,27 @@ export default {
       return 0
     },
 
-    // 把已点的菜品信息传给 shop-cart
-    selectFoods () {
+    // 传给 shop-cart
+    categoriesComputed () {
       // 当一个人清空购物车时, 服务器返回 res: {type:1},
       // 所以要判断 res 中是否有 data
       if (this.res.data) {
-        for (let rcid in this.res.data.categories) {
-          // 当一个人点的菜数量为0时, 就删除此项
-          for (let key in this.res.data.categories[rcid]) {
-            if (this.res.data.categories[rcid][key].count === 0) {
-              delete this.res.data.categories[rcid][key]
-            }
-          }
-        }
+        // for (let rcid in this.res.data.categories) {
+        //   // 当一个人点的菜数量为0时, 就删除此项
+        //   for (let key in this.res.data.categories[rcid]) {
+        //     if (this.res.data.categories[rcid][key].count === 0) {
+        //       delete this.res.data.categories[rcid][key]
+        //     }
+        //   }
+        // }
         return this.res.data.categories
       }
     },
 
+    // 传给 shop-cart
     persons () {
+      // 当一个人清空购物车时, 服务器返回 res: {type:1},
+      // 所以要判断 res 中是否有 data
       if (this.res.data) {
         return this.res.data.persons
       }
@@ -369,7 +379,6 @@ export default {
 
   },
   created () {
-    // 初始化 foodsList
     this.initWebSocket()
   },
   mounted () {
@@ -377,6 +386,7 @@ export default {
     this._calcHeight()
   },
   methods: {
+    // shop-cart 组件显示或隐藏时, 通知父组件 index.vue
     isShowShopCartMethod (data) {
       this.isShowShopCart = data
     },
@@ -390,7 +400,6 @@ export default {
       return n > 0 ? true : false
     },
 
-    // websocket
     add (data) {
       if (this.isShowShopCart) {
         // 购物车订单页点击+
@@ -410,12 +419,11 @@ export default {
         this.websocketsend(JSON.stringify(data))
       }
     },
+
     decrease (data) {
       if (this.isShowShopCart) {
-        // 购物车订单页点击-
         this.websocketsend(JSON.stringify(data))
       } else if (this.isShowGeneralCart) {
-        // 筛选菜品页上点击-
         this.websocketsend(JSON.stringify(data))
         // 更新 dishesOfPerson
         this.dishesOfPerson.forEach((dish, index) => {
@@ -427,61 +435,30 @@ export default {
           }
         })
       } else {
-        // 主页上点击-
         // -------------------------
         // 判断当前这个菜有几个人点
         let arr = []
-        for (let rcid in this.res.data.categories) {
-          // 当一个人点的菜数量为0时, 就删除此项
-          for (let key in this.res.data.categories[rcid]) {
-            if (this.res.data.categories[rcid][key].count === 0) {
-              delete this.res.data.categories[rcid][key]
-            }
-          }
-          // 获取一个 categories 下的所有对象的 keys 集合
-          let keys = Object.keys(this.res.data.categories[rcid])
-          // 获取 dishesid 的集合
+        for (let rcid in this.categoriesComputed) {
+          let keys = Object.keys(this.categoriesComputed[rcid])
           keys.forEach(item => {
             arr.push(Number(item.split(",")[0]))
           })
         }
-
-        // 获取点当前这个菜的集合
         let tmpArr = arr.filter((item) => {
           return item === Number(data.data.dishesid)
         })
 
-        // 当前这个菜是多人点的菜
+        // tmpArr 长度大于 1 为多人点菜, 否则为单人点的菜
         if (tmpArr.length > 1) {
-          // 找到所有点当前这个菜的所有人
-          this.dishesOfPerson.splice(0,this.dishesOfPerson.length)
-          for (let rcid in this.res.data.categories) {
-            for (let key in this.res.data.categories[rcid]) {
-              let dishesid = Number(key.split(",")[0])
-              let openid = key.split(",")[1]
-              if (dishesid === Number(data.data.dishesid)) {
-                let food = {}
-                food.count = this.res.data.categories[rcid][key].count
-                food.dishesid = Number(data.data.dishesid)
-                food.rcid = rcid
-                food.openid = openid
-
-                let obj = {}
-                obj.food = food
-                obj.name = this.foodsList[rcid].list[dishesid].name
-                obj.headimgurl = this.res.data.persons[openid].headimgurl
-
-                this.dishesOfPerson.push(obj)
-              }
-            }
-          }
-          // 弹窗
+          let dishesid = Number(data.data.dishesid)
+          this.handleDishesOfPerson(dishesid)
           this.isShowGeneralCart = true
         } else {
-          // 当前菜是单人点的菜
-          for (let rcid in this.res.data.categories) {
-            for (let key in this.res.data.categories[rcid]) {
-              let openid = key.split(",")[1]
+          let rcid = Number(data.data.rcid)
+          for (let key in this.categoriesComputed[rcid]) {
+            let dishesid = key.split(",")[0]
+            let openid = key.split(",")[1]
+            if (dishesid === Number(data.data.dishesid)) {
               data.data.openid = openid
             }
           }
@@ -489,18 +466,43 @@ export default {
         }
         // -------------------------
       }
-
-
     },
 
-    // 清空购物车
+    // 找到所有点当前这个菜的所有人
+    handleDishesOfPerson (val) {
+      this.dishesOfPerson.splice(0, this.dishesOfPerson.length)
+      for (let rcid in this.categoriesComputed) {
+        for (let key in this.categoriesComputed[rcid]) {
+          let dishesid = Number(key.split(",")[0])
+          let openid = key.split(",")[1]
+          if (dishesid === val) {
+            let food = {}
+            food.count = this.categoriesComputed[rcid][key].count
+            food.dishesid = val
+            food.rcid = rcid
+            food.openid = openid
+
+            let obj = {}
+            obj.food = food
+            obj.name = this.foodsList[rcid].list[dishesid].name
+            obj.headimgurl = this.res.data.persons[openid].headimgurl
+
+            this.dishesOfPerson.push(obj)
+          }
+        }
+      }
+    },
+
+    // 清空购物车（账单页）
     empty (data) {
       this.websocketsend(JSON.stringify(data))
     },
 
-    // 初始化weosocket
+    // 初始化 weosocket
     initWebSocket () {
-      const wsurl = httpUrl.getWsurl
+      let tableid = sessionStorage.getItem('tableid')
+      let wsurl = httpUrl.getWsurl + tableid
+      // let wsurl = 'ws:192.168.1.119:8081/pzcatering-web/ws/dish.do?1'
       this.websock = new WebSocket(wsurl)
       this.websock.onmessage = this.websocketonmessage
       this.websock.onerror = this.websocketonerror
@@ -510,6 +512,8 @@ export default {
     // 接收数据
     websocketonmessage (e) {
       this.res = JSON.parse(e.data)
+      console.log("接收数据：")
+      console.log(this.res)
 
       // type:0 同步, type:1 清空
       if (this.res.type === 0) {
@@ -524,7 +528,6 @@ export default {
               this.foodsList[rcid].list[dishesid].count += count
             }
           }
-          console.log("数据已接收...")
 
           // 如果有 newDish, 则弹窗头像提示框
           if (this.res.data.newDish) {
@@ -539,7 +542,6 @@ export default {
 
       } else if (this.res.type === 1) {
         this.clearAllDishesCount()
-        console.log("数据已清空!")
       }
 
     },
@@ -556,7 +558,8 @@ export default {
     // 发送数据
     websocketsend (data) {
       this.websock.send(data)
-      console.log("数据发送中...")
+      console.log("发送数据：")
+      console.log(data)
     },
 
     // 通信错误
@@ -564,7 +567,6 @@ export default {
       setTimeout(() => {
         this.initWebSocket()
       }, 5000)
-      console.log("通信发生错误...")
     },
 
     // 关闭
@@ -572,7 +574,6 @@ export default {
       setTimeout(() => {
         this.initWebSocket()
       }, 5000)
-      console.log("连接已关闭...")
     },
 
     // 点击左侧类别, 右侧滑动到对应位置
@@ -613,7 +614,7 @@ export default {
       }
     },
 
-    // 关闭 general-cart, 并清空 dishOfPerson
+    // 关闭 general-cart
     close () {
       this.isShowGeneralCart = false
     }
