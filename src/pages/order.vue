@@ -119,15 +119,27 @@
       </ul>
       <div class="content-total">合计：<span>9999</span></div>
     </div>
-    <div class="footer">
-      <a class="btn-circle" href="javascript:;">继续加菜</a>
-      <a href="javascript:;">结账</a>
+    <div class="order-footer">
+      <a class="btn-circle" href="javascript:;"
+        @click="gotoIndex">
+        继续加菜
+      </a>
+      <a href="javascript:;"
+        @click="gotoPay">结账</a>
     </div>
   </div>
 </template>
 
 <script>
 export default {
+  methods: {
+    gotoIndex () {
+      this.$router.push({name: 'index'})
+    },
+    gotoPay () {
+      this.$router.push({name: 'pay'})
+    }
+  }
 }
 </script>
 
@@ -226,7 +238,7 @@ export default {
 
 
 
-.footer {
+.order-footer {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -236,7 +248,7 @@ export default {
   display: flex;
   box-shadow: 1px 1px 10px #e7e7e7;
 }
-.footer a {
+.order-footer a {
   background-color: #fd6d52;
   color: #fff;
   padding: 10px 20px;
@@ -245,7 +257,7 @@ export default {
   align-items: center;
   width: 100%;
 }
-.footer a.btn-circle {
+.order-footer a.btn-circle {
   background-color: #fff;
   color: #fd6d52;
 }

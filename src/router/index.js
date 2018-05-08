@@ -3,6 +3,8 @@ import Router from 'vue-router'
 import index from '@/pages/index'
 import start from '@/pages/start'
 import order from '@/pages/order'
+import pay from '@/pages/pay'
+import paySuccess from '@/pages/paySuccess'
 
 Vue.use(Router)
 
@@ -22,6 +24,16 @@ export default new Router({
       path: '/order',
       name: 'order',
       component: order
+    },
+    {
+      path: '/pay',
+      name: 'pay',
+      component: pay
+    },
+    {
+      path: '/paySuccess',
+      name: 'paySuccess',
+      component: paySuccess
     }
   ]
 })
