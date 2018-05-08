@@ -1,5 +1,7 @@
 # wx-order
--------------------------
+
+## 返回的数据
+
 categories: {
   1: {
     '1,abc': {count: 2},
@@ -23,14 +25,9 @@ categories: {
   }
 }
 
--------------------------
-main.js
+## 修改
 
-mockjs
--------------------------
-index.vue
-
+1. main.js：mockjs
+2. index.vue
 <!-- data 中的 res 数据 -->
-
 initWebSocket 方法中的 websocket 接口地址
--------------------------
