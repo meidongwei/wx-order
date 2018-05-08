@@ -1,5 +1,5 @@
 <template>
-  <div class="pay-bg">
+  <div class="bg">
     <div class="pay-header">
       <div class="header-top">
         <span>品智一店</span>
@@ -31,8 +31,8 @@
         </div>
       </div>
     </div>
-    <div class="pay-discount">
-      <div class="pay-title">优惠方案</div>
+    <div class="segment discount">
+      <div class="title">优惠方案</div>
       <ul>
         <li>
           <span>菜品优惠</span>
@@ -44,8 +44,8 @@
         </li>
       </ul>
     </div>
-    <div class="pay-paymount">
-      <div class="pay-title">请选择支付方式</div>
+    <div class="segment paymount">
+      <div class="title">请选择支付方式</div>
       <ul>
         <li>
           <span>代金券</span>
@@ -65,7 +65,7 @@
         </li>
       </ul>
     </div>
-    <div class="pay-footer">
+    <div class="seg-footer">
       <a href="javascript:;"
         @click="goTo">支付87.5</a>
     </div>
@@ -102,14 +102,9 @@ export default {
 </script>
 
 <style scoped>
-.pay-bg {
-  min-height: 100vh;
-  background-color: #f5f5f5;
-}
-
-
 .pay-header {
   background-color: #fff;
+  margin-bottom: 5px;
 }
 .pay-header .header-top {
   padding: 10px 15px;
@@ -180,87 +175,15 @@ export default {
   padding: 10px 15px;
 }
 
-
-
-
-
-.pay-title {
-  padding: 5px 10px;
-  font-size: 14px;
-  border-left: 1px solid #dddddd;
-  color: #585858;
+.discount ul li span:nth-child(1),
+.paymount ul li span:nth-child(1) {
+  width: 50%;
 }
-.pay-discount ul,
-.pay-paymount ul {
-  position: relative;
-}
-.pay-discount ul::before,
-.pay-paymount ul::before {
-  content: '';
-  height: 1px;
-  background-color: #eeeeee;
-  transform: scaleY(.5);
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-}
-.pay-discount ul li,
-.pay-paymount ul li {
-  padding: 10px 15px;
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  background-color: #fff;
-}
-.pay-discount ul li::after,
-.pay-paymount ul li::after {
-  content: '';
-  height: 1px;
-  background-color: #eeeeee;
-  transform: scaleY(.5);
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-}
-.pay-discount ul li span:nth-clild(1),
-.pay-paymount ul li span:nth-clild(1){
-  width: 40%;
-}
-.pay-discount ul li span:nth-clild(2),
-.pay-paymount ul li span:nth-clild(2){
-  width: 20%;
-}
-.pay-discount ul li span:nth-clild(3),
-.pay-paymount ul li span:nth-clild(3){
-  width: 40%;
+.discount ul li span:nth-child(2),
+.paymount ul li span:nth-child(2) {
+  width: 50px;
   text-align: right;
 }
 
 
-
-
-
-.pay-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  height: 50px;
-  display: flex;
-  box-shadow: 1px 1px 10px #e7e7e7;
-}
-.pay-footer a {
-  background-color: #fd6d52;
-  color: #fff;
-  padding: 10px 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
 </style>

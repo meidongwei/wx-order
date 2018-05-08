@@ -46,13 +46,19 @@
     </div>
     <div class="paySuccess-footer">
       <a class="btn-circle" href="javascript:;">开发票</a>
-      <a href="javascript:;">订单详情</a>
+      <a href="javascript:;"
+        @click="goTo">订单详情</a>
     </div>
   </div>
 </template>
 
 <script>
 export default {
+  methods: {
+    goTo () {
+      this.$router.push({name: 'orderDetails'})
+    }
+  }
 }
 </script>
 

@@ -5,6 +5,7 @@ import start from '@/pages/start'
 import order from '@/pages/order'
 import pay from '@/pages/pay'
 import paySuccess from '@/pages/paySuccess'
+import orderDetails from '@/pages/orderDetails'
 
 Vue.use(Router)
 
@@ -34,6 +35,11 @@ export default new Router({
       path: '/paySuccess',
       name: 'paySuccess',
       component: paySuccess
+    },
+    {
+      path: '/orderDetails',
+      name: 'orderDetails',
+      component: orderDetails
     }
   ]
 })
