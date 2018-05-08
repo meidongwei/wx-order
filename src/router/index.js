@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import index from '@/components/index'
-import start from '@/components/start'
+import index from '@/pages/index'
+import start from '@/pages/start'
+import order from '@/pages/order'
 
 Vue.use(Router)
 
@@ -16,6 +17,11 @@ export default new Router({
       path: '/index',
       name: 'index',
       component: index
+    },
+    {
+      path: '/order',
+      name: 'order',
+      component: order
     }
   ]
 })

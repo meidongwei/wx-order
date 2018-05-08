@@ -1,4 +1,4 @@
-let localhostDev = false
+let localhostDev = true
 let _host= localhostDev ?
   'http://localhost:8080' :
   '/pzcatering-web/wxdc/api.do?method='

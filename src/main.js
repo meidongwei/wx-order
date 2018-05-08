@@ -13,6 +13,9 @@ import '@/assets/ali-fonts/iconfont.css'
 import Notice from '@/components/avatarToast/index'
 Vue.use(Notice)
 
+// 引入 mockjs
+import mock from './mock/mock.js'
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

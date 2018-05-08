@@ -187,7 +187,7 @@ export default {
         return
       }
       if (this.payDesc === '提交订单') {
-        alert('跳转到订单页')
+        this.$router.push({name: 'order'})
         return
       }
     },

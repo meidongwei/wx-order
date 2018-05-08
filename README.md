@@ -23,12 +23,10 @@ categories: {
   }
 }
 
-头像A  蒸羊羔儿  3个（openid, dishesid, rcid, count）
-头像B  蒸羊羔儿  1个（openid, dishesid, rcid, count）
 -------------------------
-start.vue
+main.js
 
-getUserInfo()
+mockjs
 -------------------------
 index.vue
 

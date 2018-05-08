@@ -53,6 +53,7 @@
 </template>
 
 <script>
+
 import axios from 'axios'
 import httpUrl from '@/http_url'
 export default {
@@ -96,32 +97,6 @@ export default {
   methods: {
     // 获取用户数据
     getUserInfo () {
-
-      // const userList = [
-      //   {
-      //     nickname: 'Arif',
-      //     headimgurl: 'https://thirdwx.qlogo.cn/mmopen/vi_32/PiajxSqBRaELImyOUmrVjSb9ic27KVibGasR3xuMRmZGbO4VYueopgOACYwuI2jgGX7w6aaXYPf5G9uqmLniczGnvQ/132',
-      //     tableid: 8,
-      //     openid: 1
-      //   },
-      //   {
-      //     nickname: 'Bob',
-      //     headimgurl: 'https://user-gold-cdn.xitu.io/2018/5/3/1632417db7b0efd0?imageView2/1/w/100/h/100/q/85/format/webp/interlace/1',
-      //     tableid: 8,
-      //     openid: 2
-      //   }
-      // ]
-      // let index = parseInt(Math.random()*userList.length)
-      // let user = userList[index]
-      // this.nickname = user.nickname
-      // this.headimgurl = user.headimgurl
-      // this.tableid = user.tableid
-      // this.openid = user.openid
-      // this.tableimgurl = 'https://user-gold-cdn.xitu.io/2018/4/1/1627ec0f75ce9f31?imageView2/1/w/120/h/120/q/85/format/webp/interlace/1'
-      // sessionStorage.nickname = this.nickname
-      // sessionStorage.headimgurl = this.headimgurl
-      // sessionStorage.tableid = this.tableid
-      // sessionStorage.openid = this.openid
 
       this.isShowLoading = true
       axios.get(httpUrl.getWxUserinfo)
@@ -172,7 +147,6 @@ export default {
   .bg {
     height: 100vh;
     width: 100vw;
-    /* opacity: 0.8; */
     background: -webkit-linear-gradient(rgba(255,0,0,0), #000000); /* Safari 5.1 - 6.0 */
     background: -o-linear-gradient(rgba(255,0,0,0), #000000); /* Opera 11.1 - 12.0 */
     background: -moz-linear-gradient(rgba(255,0,0,0), #000000); /* Firefox 3.6 - 15 */

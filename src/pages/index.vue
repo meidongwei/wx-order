@@ -3,17 +3,22 @@
 
     <!-- 大图模块 -->
     <div v-show="isShowSellerHeader" class="seller-header">
-      <div class="desc">
+      <div class="desc" @click="handleShowActive">
         <div>
           <span>减</span>
           满100减20，满50减10
         </div>
-        <div>3个活动</div>
+        <div class="active-box">
+          3个活动
+          <div class="icon-box">
+            <div class="triangle"></div>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- 头像提示组件会挂在到 id 为 cc 的 dom 中 -->
-    <div id="cc" style="display:flex;">
+    <div id="cc" class="body-content" :class="{'FullHeight': isFullHeight}">
 
       <!-- 左侧列表 -->
       <div class="menu-wrapper" ref="menuRef">
@@ -99,44 +104,56 @@
       @handleAdd="add" @handleDecrease="decrease">
     </GeneralCart>
 
+    <!-- 公告 -->
+    <Notice v-show="isShowNotice" :options="options"
+      @handleCloseNotice="handleCloseNotice"
+    ></Notice>
+
   </div>
 </template>
 
 <script>
-import ShopCart from './shop-cart'
+import ShopCart from '@/components/shop-cart'
 import axios from 'axios'
 import httpUrl from '@/http_url'
 import BScroll from 'better-scroll'
 import CartControl from '@/components/cart-control'
 import GeneralCart from '@/components/general-cart'
+import Notice from '@/components/dialog/notice'
+import Prompt from '@/components/dialog/prompt'
 export default {
   components: {
     ShopCart,
     CartControl,
-    GeneralCart
+    GeneralCart,
+    Notice,
+    Prompt
   },
   data () {
     return {
+      isFullHeight: false,
+      isShowNotice: false,
+      options: {},
       dishesOfPerson: [],
       isShowShopCart: false,
       isShowGeneralCart: false,
       res: {
-        // data: {
-        //   categories: {
-        //     1: {
-        //       '1,1': {count: 2},
-        //       '2,2': {count: 3}
-        //     },
-        //     2: {
-        //       '6,1': {count: 1},
-        //       '6,2': {count: 1}
-        //     }
-        //   },
-        //   persons: {
-        //     '1': {headimgurl: 'https://thirdwx.qlogo.cn/mmopen/vi_32/PiajxSqBRaELImyOUmrVjSb9ic27KVibGasR3xuMRmZGbO4VYueopgOACYwuI2jgGX7w6aaXYPf5G9uqmLniczGnvQ/132'},
-        //     '2': {headimgurl: 'https://user-gold-cdn.xitu.io/2018/5/3/1632417db7b0efd0?imageView2/1/w/100/h/100/q/85/format/webp/interlace/1'}
-        //   }
-        // }
+        data: {
+          categories: {
+            1: {
+              '1,1': {count: 2},
+              '2,2': {count: 3}
+            },
+            2: {
+              '6,1': {count: 1},
+              '6,2': {count: 1}
+            }
+          },
+          persons: {
+            '1': {headimgurl: 'https://thirdwx.qlogo.cn/mmopen/vi_32/PiajxSqBRaELImyOUmrVjSb9ic27KVibGasR3xuMRmZGbO4VYueopgOACYwuI2jgGX7w6aaXYPf5G9uqmLniczGnvQ/132'},
+            '2': {headimgurl: 'https://user-gold-cdn.xitu.io/2018/5/3/1632417db7b0efd0?imageView2/1/w/100/h/100/q/85/format/webp/interlace/1'}
+          }
+        }
       },
       timeid: 0,
       avatarUrl: '',
@@ -371,21 +388,52 @@ export default {
     // 监听 scrollY < 200 时, 显示大图模块
     isShowSellerHeader () {
       if (this.scrollY < 200) {
+        this.isFullHeight = false
         return true
       } else {
+        this.isFullHeight = true
         return false
       }
     },
 
   },
   created () {
-    this.initWebSocket()
+    // this.initWebSocket()
   },
   mounted () {
     this._initScroll()
     this._calcHeight()
   },
   methods: {
+    // 显示公告模态框
+    handleShowActive () {
+      this.options = {
+        title: '公告',
+        list: [
+          {
+            id: 1,
+            type: 1,
+            text: '特价活动'
+          },
+          {
+            id: 2,
+            type: 2,
+            text: '买赠活动'
+          },
+          {
+            id: 3,
+            type: 3,
+            text: '满减活动'
+          }
+        ]
+      }
+      this.isShowNotice = true
+    },
+
+    handleCloseNotice () {
+      this.isShowNotice = false
+    },
+
     // shop-cart 组件显示或隐藏时, 通知父组件 index.vue
     isShowShopCartMethod (data) {
       this.isShowShopCart = data
@@ -441,24 +489,24 @@ export default {
         for (let rcid in this.categoriesComputed) {
           let keys = Object.keys(this.categoriesComputed[rcid])
           keys.forEach(item => {
-            arr.push(Number(item.split(",")[0]))
+            arr.push(item.split(",")[0])
           })
         }
         let tmpArr = arr.filter((item) => {
-          return item === Number(data.data.dishesid)
+          return item === data.data.dishesid
         })
 
         // tmpArr 长度大于 1 为多人点菜, 否则为单人点的菜
         if (tmpArr.length > 1) {
-          let dishesid = Number(data.data.dishesid)
+          let dishesid = data.data.dishesid
           this.handleDishesOfPerson(dishesid)
           this.isShowGeneralCart = true
         } else {
-          let rcid = Number(data.data.rcid)
+          let rcid = data.data.rcid
           for (let key in this.categoriesComputed[rcid]) {
             let dishesid = key.split(",")[0]
             let openid = key.split(",")[1]
-            if (dishesid === Number(data.data.dishesid)) {
+            if (dishesid === data.data.dishesid) {
               data.data.openid = openid
             }
           }
@@ -473,7 +521,7 @@ export default {
       this.dishesOfPerson.splice(0, this.dishesOfPerson.length)
       for (let rcid in this.categoriesComputed) {
         for (let key in this.categoriesComputed[rcid]) {
-          let dishesid = Number(key.split(",")[0])
+          let dishesid = key.split(",")[0]
           let openid = key.split(",")[1]
           if (dishesid === val) {
             let food = {}
@@ -624,7 +672,7 @@ export default {
 </script>
 
 <style scoped>
-/* 头部 */
+/* 大图模块 */
 .seller-header {
   height: 200px;
   background-color: #636363;
@@ -650,10 +698,38 @@ export default {
   background-color: #fd6d52;
   padding: 0 2px 2px 2px;
 }
+.seller-header .active-box {
+  display: flex;
+}
+.seller-header .icon-box {
+  position: relative;
+  width: 20px;
+  display: flex;
+  justify-content: center;
+}
+.seller-header .icon-box .triangle {
+  width: 0;
+  height: 0;
+  border-top: 8px solid #fff;
+  border-right: 8px solid transparent;
+  transform: rotate(-135deg);
+  position: absolute;
+  top: 5px;
+}
+
+
+/* 主要内容 */
+.body-content {
+  display: flex;
+  height: calc(100vh - 200px);
+}
+.FullHeight {
+  height: 100vh;
+}
 
 /* 左侧按钮模块 */
 .menu-wrapper {
-  height: calc(100vh - 50px);
+  height: calc(100% - 50px);
   width: 100px;
   overflow: hidden;
   /* overflow: auto; */
@@ -710,7 +786,7 @@ export default {
 
 /* 右侧食物模块 */
 .foods-wrapper {
-  height: calc(100vh - 50px);
+  height: calc(100% - 50px);
   flex: 1;
   overflow: hidden;
   /* overflow: auto; */
