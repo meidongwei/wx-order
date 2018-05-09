@@ -38,7 +38,7 @@ a {
 }
 
 .segment {
-  margin-bottom: 5px;
+  padding-bottom: 5px;
 }
 .segment .title {
   padding: 5px 10px;
@@ -101,7 +101,7 @@ a {
   box-shadow: 1px 1px 10px #e7e7e7;
 }
 .seg-footer a {
-  background-color: #fd6d52;
+  /* background-color: #fd6d52; */
   color: #fff;
   padding: 10px 20px;
   display: flex;

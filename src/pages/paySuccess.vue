@@ -1,12 +1,17 @@
 <template>
   <div>
     <div class="success-header">
-      <div class="header-img"></div>
-      <h2><span>A101</span> 支付成功~</h2>
+      <div class="header-img"
+        :style="'backgroundColor:' + themeColor"></div>
+      <h2>
+        <span :style="'color:' + themeColor">A101</span>
+        支付成功~
+      </h2>
       <p>客官走好，下次再来啊～</p>
     </div>
     <div class="success-content">
-      <div class="redTop"></div>
+      <div class="redTop"
+        :style="'border-top:5px solid ' + themeColor"></div>
       <div class="order-box">
         <ul>
           <li>
@@ -44,9 +49,11 @@
         </ul>
       </div>
     </div>
-    <div class="paySuccess-footer">
-      <a class="btn-circle" href="javascript:;">开发票</a>
+    <div class="seg-footer">
+      <a class="btn-circle" href="javascript:;"
+        :style="'color:' + themeColor">开发票</a>
       <a href="javascript:;"
+        :style="'backgroundColor:' + themeColor"
         @click="goTo">订单详情</a>
     </div>
   </div>
@@ -54,6 +61,11 @@
 
 <script>
 export default {
+  computed: {
+    themeColor () {
+      return sessionStorage.getItem('themeColor')
+    }
+  },
   methods: {
     goTo () {
       this.$router.push({name: 'orderDetails'})
@@ -73,16 +85,16 @@ export default {
 .success-header .header-img {
   height: 80px;
   width: 80px;
-  background-color: #fd6d52;
+  /* background-color: #fd6d52; */
   margin-bottom: 10px;
 }
 .success-header h2 {
   font-weight: normal;
   font-size: 20px;
 }
-.success-header h2 span {
+/* .success-header h2 span {
   color: #fd6d52;
-}
+} */
 .success-header p {
   font-size: 14px;
   color: #919191;
@@ -98,8 +110,8 @@ export default {
   position: relative;
 }
 .success-content .redTop {
-  border-top: 5px solid #fd6d52;
-  border-bottom: 5px solid #e02300;
+  /* border-top: 5px solid #fd6d52; */
+  border-bottom: 5px solid #393939;
   width: 84%;
   border-radius: 5px;
 }
@@ -132,25 +144,6 @@ export default {
 
 
 
-.paySuccess-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  height: 50px;
-  display: flex;
-  box-shadow: 1px 1px 10px #e7e7e7;
-}
-.paySuccess-footer a {
-  background-color: #fd6d52;
-  color: #fff;
-  padding: 10px 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
 .paySuccess-footer a.btn-circle {
   background-color: #fff;
   color: #fd6d52;

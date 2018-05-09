@@ -5,11 +5,11 @@
     <div v-show="isShowSellerHeader" class="seller-header">
       <div class="desc" @click="handleShowActive">
         <div>
-          <span>减</span>
+          <span class="font-icon">减</span>
           满100减20，满50减10
         </div>
         <div class="active-box">
-          3个活动
+          <span>3个活动</span>
           <div class="icon-box">
             <div class="triangle"></div>
           </div>
@@ -25,7 +25,13 @@
         <ul>
           <li v-for="(value, key, index) in foodsList" :key="key"
             :class="{'current': currentIndex === index}">
-            <a @click="selectMenu(index, $event)">
+            <a @click="selectMenu(index, $event)"
+              v-if="currentIndex === index"
+              :style="{color: themeColor}">
+              {{ value.title }}
+            </a>
+            <a @click="selectMenu(index, $event)"
+              v-else>
               {{ value.title }}
             </a>
             <div class="totalCount"
@@ -54,18 +60,18 @@
                     <p style="color:#9c9c9c;font-size:10px;">
                       源于澳大利亚进口鸡肉和...
                     </p>
-                    <!-- <p style="color:#5b5b5b;font-size:12px;">
+                    <p style="color:#5b5b5b;font-size:12px;">
                       月售59份<span style="padding-left:5px;">
                         好评率100%</span>
-                    </p> -->
-                    <p style="color:#5b5b5b;font-size:10px;display:flex;">
+                    </p>
+                    <!-- <p style="color:#5b5b5b;font-size:10px;display:flex;">
                       <span style="background:#ed4f1e;color:#fff;padding:0 2px;border:1px solid #ed4f1e;height:11px;
                       display:flex;justify-content:center;align-items:center;">5折</span>
                       <span style="padding-left:2px;border:1px solid #ed4f1e;height:11px;padding-right:2px;
                       display:flex;justify-content:center;align-items:center;color:#ed4f1e;">
                         每单限1份优惠</span>
-                    </p>
-                    <p style="color:#f06019;">
+                    </p> -->
+                    <p style="color:#f04722;">
                       	￥{{ val.price }}
                     </p>
                   </div>
@@ -345,6 +351,9 @@ export default {
     }
   },
   computed: {
+    themeColor () {
+      return sessionStorage.getItem('themeColor')
+    },
 
     // 监听右侧滚动值, 实时显示左侧类别
     currentIndex () {
@@ -694,7 +703,7 @@ export default {
   box-sizing: border-box;
   color: #fff;
 }
-.seller-header .desc span {
+.seller-header .desc .font-icon {
   background-color: #fd6d52;
   padding: 0 2px 2px 2px;
 }
@@ -766,9 +775,9 @@ export default {
   background-color: #fff;
 
 }
-.menu-wrapper ul li.current a {
+/* .menu-wrapper ul li.current a {
   color: #fd6d52;
-}
+} */
 .totalCount {
   position: absolute;
   right: 10px;

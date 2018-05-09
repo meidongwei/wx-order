@@ -1,7 +1,7 @@
 <template>
   <div class="bg">
     <div class="segment">
-      <div class="title">订单菜品</div>
+      <div class="title" :style="'color:' + themeColor">订单菜品</div>
       <ul>
         <li>
           <span>蒸羊羔儿</span>
@@ -24,7 +24,7 @@
       </div>
     </div>
     <div class="segment order-info">
-      <div class="title">订单信息</div>
+      <div class="title" :style="'color:' + themeColor">订单信息</div>
       <ul>
         <li>
           <span>台号</span>
@@ -46,6 +46,7 @@
     </div>
     <div class="seg-footer">
       <a href="javascript:;"
+        :style="'backgroundColor:' + themeColor"
         @click="goTo">支付87.5</a>
     </div>
   </div>
@@ -59,6 +60,9 @@ export default {
     }
   },
   computed: {
+    themeColor () {
+      return sessionStorage.getItem('themeColor')
+    },
     text () {
       return this.isShowOrder ? '点击收起订单' : '点击查看订单'
     }
@@ -82,11 +86,11 @@ export default {
 
 <style scoped>
 .segment {
-  margin-bottom: 15px;
+  padding-bottom: 15px;
 }
 .segment .title {
   padding: 10px 15px;
-  color: #fd6d52;
+  /* color: #fd6d52; */
   background-color: #fff;
 }
 .segment .footer {

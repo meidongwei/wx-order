@@ -5,8 +5,13 @@
       <!-- 主要内容 -->
       <div class="cart" @click="toggleList">
         <div class="left">
-          <div class="logo-wrapper" :class="{'logoLight': totalCount > 0}">
-            <div class="logo">
+          <div class="logo-wrapper"
+            :style="totalCount > 0 ?
+            ('backgroundColor:' + themeColor) :
+            'backgroundColor:#d7d7d7'"
+            :class="{'logoLight': totalCount > 0}">
+            <div class="logo"
+              :style="totalCount > 0 ? ('backgroundColor:' + themeColor) : ''">
               <i class="iconfont icon-caigou"></i>
             </div>
             <div class="totalCount" v-show="totalCount > 0">{{ totalCount }}</div>
@@ -21,7 +26,7 @@
         </div>
         <div class="right" @click.stop="pay">
           <div class="pay"
-            :class="{'payLight': this.totalPrice > 0}">
+            :style="totalPrice > 0 ? ('backgroundColor:' + themeColor + ';color: #fff;') : ''">
             {{ payDesc }}
           </div>
         </div>
@@ -104,6 +109,10 @@ export default {
     }
   },
   computed: {
+    themeColor () {
+      return sessionStorage.getItem('themeColor')
+    },
+
     // 所选商品总价
     totalPrice () {
       let total = 0
@@ -246,7 +255,6 @@ export default {
     display: flex;
   }
   .left .logo-wrapper {
-    display: inline-block;
     position: relative;
     top: -10px;
     box-sizing: border-box;
@@ -255,21 +263,15 @@ export default {
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    vertical-align: top;
-    text-align: center;
-    background-color: #e7e7e7;
-  }
-  .left .logo-wrapper.logoLight {
-    background-color: #ff9c8a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .left .logo-wrapper .logo {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background-color: #d1d1d1;
-  }
-  .left .logo-wrapper.logoLight .logo {
-    background-color: #fd6d52;
+    border: 1px solid #fff;
   }
   .left .logo-wrapper .logo i {
     font-size: 24px;
@@ -323,10 +325,6 @@ export default {
     font-weight: 700;
     color: #d1d1d1;
     background-color: #f2f2f2;
-  }
-  .right .pay.payLight {
-    background-color: #fd6d52;
-    color: #fff;
   }
 
   /* 购物车列表 */

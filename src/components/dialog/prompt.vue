@@ -7,8 +7,11 @@
         客官，您还没有点主食，是否需要？
       </div>
       <div class="btn-group">
-        <div class="btn btn-circle" @click="handleClosePrompt">不需要</div>
-        <div class="btn" @click="handleClosePrompt">需要</div>
+        <div class="btn btn-circle"
+          :style="'color:' + themeColor + ';border:1px solid ' + themeColor"
+          @click="handleClosePrompt">不需要</div>
+        <div class="btn" :style="'backgroundColor:' + themeColor"
+          @click="handleClosePrompt">需要</div>
       </div>
     </div>
   </div>
@@ -16,6 +19,11 @@
 
 <script>
 export default {
+  computed: {
+    themeColor () {
+      return sessionStorage.getItem('themeColor')
+    }
+  },
   methods: {
     handleClosePrompt () {
       this.$emit('handleClosePrompt')
@@ -72,17 +80,17 @@ export default {
 .dialog .dialog-content .btn-group .btn {
   padding: 10px 20px;
   border-radius: 20px;
-  background-color: #fd6d52;
+  /* background-color: #fd6d52; */
   color: #fff;
   font-size: 14px;
   text-align: center;
   margin-bottom: 10px;
 }
 .dialog .dialog-content .btn-group .btn.btn-circle {
-  border: 1px solid #fd6d52;
+  /* border: 1px solid #fd6d52; */
   background-color: #fff;
   margin-right: 8px;
-  color: #fd6d52;
+  /* color: #fd6d52; */
 }
 .dialog .bg {
   position: fixed;

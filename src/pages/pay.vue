@@ -26,6 +26,7 @@
           </li>
         </ul>
         <div class="show-list-btn"
+          :style="'color:' + themeColor"
           @click="handleShowOrder">
           {{ text }}
         </div>
@@ -67,6 +68,7 @@
     </div>
     <div class="seg-footer">
       <a href="javascript:;"
+        :style="'backgroundColor:' + themeColor"
         @click="goTo">支付87.5</a>
     </div>
   </div>
@@ -80,6 +82,9 @@ export default {
     }
   },
   computed: {
+    themeColor () {
+      return sessionStorage.getItem('themeColor')
+    },
     text () {
       return this.isShowOrder ? '点击收起订单' : '点击查看订单'
     }
@@ -126,7 +131,7 @@ export default {
 .header-order h2 {
   font-size: 30px;
   font-weight: normal;
-  color: #fd6d52;
+  color: #f04722;
   text-align: center;
   margin-top: 15px;
 }
@@ -170,7 +175,7 @@ export default {
 }
 .header-order .show-list-btn {
   text-align: center;
-  color: #fd6d52;
+  /* color: #fd6d52; */
   font-size: 12px;
   padding: 10px 15px;
 }

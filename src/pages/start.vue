@@ -27,6 +27,7 @@
           v-for="(item, index) in peopleList" :key="item.id">
           <a href="javascript:;"
             :class="{'p-active': index === nowIndex2}"
+            :style="index === nowIndex2 ? ('backgroundColor:' + themeColor) : ''"
             @click="selectNum(index)">
             {{ item.id }}
           </a>
@@ -34,12 +35,13 @@
       </div>
 
       <div class="footer">
-        <a href="javascript:;" class="btn-primary-circle"
-          v-for="(item, index) in btnList" :key="item.id"
-          :class="{active: index === nowIndex}"
-          @click="selectTorD(index)">
-          {{ item.name }}
-        </a>
+        <div v-for="(item, index) in btnList" :key="item.id">
+          <a href="javascript:;" class="btn-primary-circle"
+            :style="index === nowIndex ? ('backgroundColor:' + themeColor + ';border: 1px solid ' + themeColor) : ''"
+            @click="selectTorD(index)">
+            {{ item.name }}
+          </a>
+        </div>
       </div>
 
       <div class="loading" v-show="isShowLoading">
@@ -59,6 +61,7 @@ import httpUrl from '@/http_url'
 export default {
   data () {
     return {
+      themeColor: '#fd6d52',
       nowIndex: 0, // 选择堂食或打包
       nowIndex2: 0, // 选择几位
       isShowLoading: false,
@@ -95,6 +98,7 @@ export default {
     this.getUserInfo()
   },
   methods: {
+
     // 获取用户数据
     getUserInfo () {
 
@@ -114,6 +118,7 @@ export default {
             sessionStorage.headimgurl = this.headimgurl
             sessionStorage.tableid = this.tableid
             sessionStorage.openid = this.openid
+            sessionStorage.themeColor = this.themeColor
           } else {
           	console.log("抱歉，您的浏览器不支持 web 存储")
           }
@@ -229,7 +234,6 @@ export default {
     margin-bottom: 15px;
   }
   .peopleNum a.p-active {
-    background-color: #fd6d52;
     color: #fff;
   }
 
@@ -251,10 +255,10 @@ export default {
   .btn-primary-circle:first-child {
     margin-right: 10px;
   }
-  .active {
+  /* .active {
     background-color: #fd6d52;
     border: 1px solid #fd6d52;
-  }
+  } */
 
   .loading {
     position: fixed;

@@ -9,7 +9,8 @@
         </li>
       </ul>
       <div class="btn-group">
-        <div class="btn" @click="handleCloseNotice">我知道了</div>
+        <div class="btn" :style="'backgroundColor:' + themeColor"
+          @click="handleCloseNotice">我知道了</div>
       </div>
     </div>
   </div>
@@ -19,6 +20,11 @@
 export default {
   props: {
     options: Object
+  },
+  computed: {
+    themeColor () {
+      return sessionStorage.getItem('themeColor')
+    }
   },
   methods: {
     handleCloseNotice () {
@@ -76,7 +82,7 @@ export default {
 .dialog .dialog-content .btn-group .btn {
   padding: 10px 20px;
   border-radius: 20px;
-  background-color: #fd6d52;
+  /* background-color: #fd6d52; */
   color: #fff;
   font-size: 14px;
   width: 50%;

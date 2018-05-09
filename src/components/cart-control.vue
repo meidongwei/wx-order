@@ -4,7 +4,9 @@
       <div class="decrease"
         @click.stop.prevent="decrease($event)"
         v-show="food.count > 0">
-        <i class="iconfont icon-jian-xianxingyuankuang"></i>
+        <i class="iconfont icon-jian-xianxingyuankuang"
+          :style="'color:' + themeColor"
+        ></i>
       </div>
     </transition>
 
@@ -13,7 +15,9 @@
     </div>
 
     <div class="add" @click.stop.prevent="add($event)">
-      <i class="iconfont icon-jia-yuankuang"></i>
+      <i class="iconfont icon-jia-yuankuang"
+        :style="'color:' + themeColor"
+      ></i>
     </div>
   </div>
 </template>
@@ -36,6 +40,11 @@ export default {
     // }
     food: {
       type: Object
+    }
+  },
+  computed: {
+    themeColor () {
+      return sessionStorage.getItem('themeColor')
     }
   },
   created () {
@@ -98,7 +107,7 @@ export default {
 .cart-control .decrease i,
 .cart-control .add i {
   font-size: 24px;
-  color: #fd6d52;
+  /* color: #fd6d52; */
   display: inline-block;
 }
 .cart-control .num {
