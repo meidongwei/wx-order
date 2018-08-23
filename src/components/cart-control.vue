@@ -1,12 +1,10 @@
 <template>
   <div class="cart-control">
     <transition name="move">
-      <div class="decrease"
-        @click.stop.prevent="decrease($event)"
-        v-show="food.count > 0">
+      <div class="decrease" v-show="food.count > 0"
+        @click.stop.prevent="decrease($event)">
         <i class="iconfont icon-jian-xianxingyuankuang"
-          :style="'color:' + themeColor"
-        ></i>
+          :style="'color:' + themeColor"></i>
       </div>
     </transition>
 
@@ -16,8 +14,7 @@
 
     <div class="add" @click.stop.prevent="add($event)">
       <i class="iconfont icon-jia-yuankuang"
-        :style="'color:' + themeColor"
-      ></i>
+        :style="'color:' + themeColor"></i>
     </div>
   </div>
 </template>
@@ -52,6 +49,7 @@ export default {
     this.headimgurl = sessionStorage.getItem('headimgurl')
   },
   methods: {
+    // 减
     decrease (event) {
       // 解决移动端响应两次点击事件的问题
       if (!event._constructed) {
@@ -70,6 +68,8 @@ export default {
       }
       this.$emit('decrease', data)
     },
+
+    // 加
     add (event) {
       // 解决移动端响应两次点击事件的问题
       if (!event._constructed) {

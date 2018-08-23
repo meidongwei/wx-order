@@ -2,7 +2,8 @@
   <div>
 
     <!-- 大图模块 -->
-    <div v-show="isShowSellerHeader" class="seller-header">
+    <!-- isShowSellerHeader -->
+    <div v-show="true" class="seller-header">
       <div class="desc" @click="handleShowActive">
         <div>
           <span class="font-icon">减</span>
@@ -112,8 +113,8 @@
 
     <!-- 公告 -->
     <Notice v-show="isShowNotice" :options="options"
-      @handleCloseNotice="handleCloseNotice"
-    ></Notice>
+      @handleCloseNotice="handleCloseNotice">
+    </Notice>
 
   </div>
 </template>
@@ -129,11 +130,7 @@ import Notice from '@/components/dialog/notice'
 import Prompt from '@/components/dialog/prompt'
 export default {
   components: {
-    ShopCart,
-    CartControl,
-    GeneralCart,
-    Notice,
-    Prompt
+    ShopCart, CartControl, GeneralCart, Notice, Prompt
   },
   data () {
     return {
@@ -405,6 +402,12 @@ export default {
       }
     },
 
+  },
+  watch: {
+    scrollY: function (val) {
+      // this.foodsScroll.movingDirectionY
+      // this.foodsScroll.y
+    }
   },
   created () {
     // this.initWebSocket()
@@ -730,7 +733,8 @@ export default {
 /* 主要内容 */
 .body-content {
   display: flex;
-  height: calc(100vh - 200px);
+  /* height: calc(100vh - 200px); */
+  height: 100vh
 }
 .FullHeight {
   height: 100vh;

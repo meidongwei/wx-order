@@ -2,9 +2,9 @@
   <transition name="fade">
     <div class="box" v-show="visible">
       <img :src="avatarUrl">
-      <span>{{ content }}</span>
-      <span v-if="num > 0">+{{ num }}</span>
-      <span v-else>{{ num }}</span>
+      <span>{{ text }}</span>
+      <span v-if="count > 0">+{{ count }}</span>
+      <span v-else>{{ count }}</span>
     </div>
   </transition>
 </template>

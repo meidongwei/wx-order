@@ -10,7 +10,8 @@
         <div class="list-content" ref="listContentRef">
           <div>
             <ul>
-              <li class="food" v-for="item in dishesOfPerson">
+              <li class="food" v-for="(item, index) in dishesOfPerson"
+                :key="index">
                 <span class="headimgurl">
                   <img :src="item.headimgurl">
                 </span>
@@ -38,13 +39,7 @@
 import BScroll from 'better-scroll'
 import CartControl from '@/components/cart-control'
 export default {
-  components: {
-    CartControl
-  },
-  data () {
-    return {
-    }
-  },
+  components: { CartControl },
   props: {
     dishesOfPerson: {
       type: Array
@@ -53,9 +48,9 @@ export default {
       type: Boolean
     }
   },
-  computed: {
-  },
-  created () {
+  data () {
+    return {
+    }
   },
   watch: {
     dishesOfPerson: function (val) {

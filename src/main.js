@@ -2,7 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
-import router from './router'
+import router from './common/router'
 
 Vue.config.productionTip = false
 
@@ -10,8 +10,8 @@ Vue.config.productionTip = false
 import '@/assets/ali-fonts/iconfont.css'
 
 // 引入头像提示组件
-import Notice from '@/components/avatarToast/index'
-Vue.use(Notice)
+import Toast from './components/avatarToast/index'
+Vue.use(Toast)
 
 // 引入 mockjs
 import mock from './mock/mock.js'
