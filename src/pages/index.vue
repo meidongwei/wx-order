@@ -3,7 +3,7 @@
 
     <!-- 大图模块 -->
     <!-- isShowSellerHeader -->
-    <div v-show="true" class="seller-header">
+    <div v-show="isShowSellerHeader" class="seller-header">
       <div class="desc" @click="handleShowActive">
         <div>
           <span class="font-icon">减</span>
@@ -19,7 +19,7 @@
     </div>
 
     <!-- 头像提示组件会挂在到 id 为 cc 的 dom 中 -->
-    <div id="cc" class="body-content" :class="{'FullHeight': isFullHeight}">
+    <div id="cc" class="body-content">
 
       <!-- 左侧列表 -->
       <div class="menu-wrapper" ref="menuRef">
@@ -132,7 +132,6 @@ export default {
   },
   data () {
     return {
-      isFullHeight: false,
       isShowNotice: false,
       options: {},
       dishesOfPerson: [],
@@ -392,10 +391,8 @@ export default {
     // 监听 scrollY < 200 时, 显示大图模块
     isShowSellerHeader () {
       if (this.scrollY < 200) {
-        this.isFullHeight = false
         return true
       } else {
-        this.isFullHeight = true
         return false
       }
     },
@@ -732,9 +729,6 @@ export default {
 .body-content {
   display: flex;
   /* height: calc(100vh - 200px); */
-  height: 100vh
-}
-.FullHeight {
   height: 100vh;
 }
 
@@ -896,6 +890,5 @@ export default {
   left: 0;
   width: 100%;
 }
-
 
 </style>
