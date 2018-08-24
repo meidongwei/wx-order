@@ -53,8 +53,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-import httpUrl from '@/http_url'
 import fruitUrl from '@/assets/fruits-lemon.gif'
 export default {
   data () {
@@ -89,28 +87,22 @@ export default {
     // 获取用户数据
     getUserInfo () {
       this.isShowLoading = true
-      axios.get(httpUrl.getWxUserinfo).then(res => {
+      this.$ajax.silentGet('getWxUserinfo').then(data => {
         this.isShowLoading = false
-        if (res.data.errcode === 0) {
-          this.nickname = res.data.res.nickname
-          this.headimgurl = res.data.res.headimgurl
-          this.tableid = res.data.res.tableid
-          this.openid = res.data.res.openid
+        if (data) {
+          this.nickname = data.nickname
+          this.headimgurl = data.headimgurl
+          this.tableid = data.tableid
+          this.openid = data.openid
 
           // 存入 sessionStorage
-          if (typeof(Storage) !== "undefined") {
-            sessionStorage.nickname = this.nickname
-            sessionStorage.headimgurl = this.headimgurl
-            sessionStorage.tableid = this.tableid
-            sessionStorage.openid = this.openid
-            sessionStorage.themeColor = this.themeColor
-          } else {
-          	console.log("抱歉，您的浏览器不支持 web 存储")
-          }
-        } else {
-          console.log(res.data.errmsg)
+          sessionStorage.nickname = this.nickname
+          sessionStorage.headimgurl = this.headimgurl
+          sessionStorage.tableid = this.tableid
+          sessionStorage.openid = this.openid
+          sessionStorage.themeColor = this.themeColor
         }
-      }).catch(err => console.log(err))
+      })
     },
 
     // 选择就餐人数

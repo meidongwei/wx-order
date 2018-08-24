@@ -121,8 +121,6 @@
 
 <script>
 import ShopCart from '@/components/shop-cart'
-import axios from 'axios'
-import httpUrl from '@/http_url'
 import BScroll from 'better-scroll'
 import CartControl from '@/components/cart-control'
 import GeneralCart from '@/components/general-cart'
@@ -561,7 +559,7 @@ export default {
     // 初始化 weosocket
     initWebSocket () {
       let tableid = sessionStorage.getItem('tableid')
-      let wsurl = httpUrl.getWsurl + tableid
+      let wsurl = 'wss://' + location.hostname + '/pzcatering-web/ws/dish.do?' + tableid
       // let wsurl = 'ws:192.168.1.119:8081/pzcatering-web/ws/dish.do?1'
       this.websock = new WebSocket(wsurl)
       this.websock.onmessage = this.websocketonmessage
