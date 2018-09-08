@@ -6,11 +6,12 @@ const ToastConstructor = Vue.extend(ToastComponent)
 let nId = 1
 let instance
 
-const Notice = (avatarUrl, text, count) => {
-  let id = 'notice-' + nId++
+const Toast = (avatarUrl, username, text, count) => {
+  let id = 'toast-' + nId++
   instance = new ToastConstructor({
     data: {
       avatarUrl: avatarUrl,
+      username: username,
       text: text,
       count: count
     },
@@ -19,16 +20,12 @@ const Notice = (avatarUrl, text, count) => {
   instance.vm = instance.$mount()
   instance.vm.visible = true
   instance.dom = instance.vm.$el
-  // document.body.appendChild(instance.dom)
-  let cc = document.getElementById('cc')
-  if (cc) {
-    cc.appendChild(instance.dom)
-  }
+  document.body.appendChild(instance.dom)
   instance.dom.style.zIndex = nId + 1001
   return instance.vm
 }
 export default {
   install: Vue => {
-    Vue.prototype.$notice = Notice
+    Vue.prototype.$avatarToast = Toast
   },
 }

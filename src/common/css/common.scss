@@ -1,0 +1,706 @@
+// ********** 全局通用样式 **********
+@font-face {
+  font-family: ClanOT;
+  src: url('../../assets/fonts/ClanOT-News.otf');
+}
+* {
+  font-family: ClanOT,
+  'Source Han Sans CN',
+  '-apple-system',
+  "Helvetica Neue",
+  "Roboto",
+  "Segoe UI",
+  sans-serif;
+  padding: 0;
+  margin: 0;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+ul li {
+  list-style: none;
+}
+a {
+  text-decoration: none;
+}
+
+.delete {
+  text-decoration: line-through;
+  color: #D5D6D6;
+}
+
+
+// ********** 标题+列表模块 **********
+.segment {
+  padding-bottom: 5px;
+  .title {
+    padding: 5px 10px;
+    font-size: 14px;
+    color: #585858;
+  }
+  ul {
+    position: relative;
+    li {
+      padding: 10px;
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      background-color: #fff;
+    }
+    li::after {
+      content: '';
+      height: 1px;
+      background-color: #eeeeee;
+      transform: scaleY(.5);
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+    }
+    li span:nth-child(1) {
+      width: 40%;
+    }
+    li span:nth-child(2) {
+      width: 20%;
+    }
+    li span:nth-child(3) {
+      width: 40%;
+      text-align: right;
+    }
+  }
+  ul::after {
+    content: '';
+    height: 1px;
+    background-color: #eeeeee;
+    transform: scaleY(.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+  }
+}
+
+
+// ********** badge 徽章 **********
+.badge {
+  min-width: 15px;
+  height: 15px;
+  border-radius: 12px;
+  font-size: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  background-color: #eb0c33;
+  text-align: center;
+}
+
+// ********** 字体标识 **********
+// type：0-默认，1-满，2-赠，3-特，4-折，5-惠
+.fonticon {
+  width: 15px;
+  height: 15px;
+  font-size: 9px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+.fonticon-red {
+  background-color: #eb0c33;
+}
+.fonticon-blue {
+  background-color: #356dd4;
+}
+.fonticon-green {
+  background-color: #23cc3f;
+}
+.fonticon-orange {
+  background-color: orange;
+}
+
+// ********** 颜色 **********
+.text-primary {
+  color: #EC9000;
+}
+.text-default {
+  color: #9e9e9e;
+}
+.text-red {
+  color: #EB0C33;
+}
+.bg-primary {
+  background-color: #EC9000;
+}
+.bg-default {
+  background-color: #9e9e9e;
+}
+
+// ********** 按钮 **********
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 14px;
+  text-align: center;
+}
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 11px;
+}
+.btn-xs {
+  padding: 3px 8px;
+  font-size: 11px;
+}
+.btn-circle {
+  border-radius: 50px;
+}
+.btn-circle5 {
+  border-radius: 5px;
+}
+.btn-default {
+  color: #fff;
+  border: 1px solid #9e9e9e;
+  background-color: #9e9e9e;
+}
+.btn-primary {
+  color: #fff;
+  border: 1px solid #EC9000;
+  background-color: #EC9000;
+}
+.btn-white {
+  color: #353535;
+  border: 1px solid #fff;
+  background-color: #fff;
+}
+.btn-line {
+  color: #fff;
+  border: 1px solid #fff;
+}
+.btn-line-primary {
+  color: #EC9000;
+  border: 1px solid #EC9000;
+}
+.btn-line-default {
+  color: #d5d5d5;
+  border: 1px solid #d5d5d5;
+}
+
+
+// ********** order页面 **********
+.menu-wrapper .current {
+  background-color: #F4F5F6;
+  border-left: 4px solid #EC9000;
+}
+/* 右侧菜品列表 */
+.foods-wrapper {
+  flex: 1;
+  padding-bottom: 100px;
+  background-color: #F4F5F6;
+  .foods-item-title {
+    height: 40px;
+    line-height: 30px;
+    text-align: center;
+    .foods-item-title-line {
+      display: inline-block;
+      width: 50px;
+      border-top: 1px solid #808080;
+      -webkit-transform: scaleY(0.5);
+      transform: scaleY(0.5);
+    }
+    .foods-item-title-text {
+      font-size: 10px;
+      color: #808080;
+      vertical-align: -5px;
+    }
+  }
+  .foods-item-con li {
+    background-color: #fff;
+    border-radius: 6px;
+    margin: 0 10px 10px 10px;
+    box-shadow: 1px 1px 1px #e2e2e2;
+    position: relative;
+  }
+  // 小图展示
+  .foods-item-con li.small-show {
+    .control {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      .num {
+        color: #808080;
+      }
+    }
+    .coninfo {
+      display: flex;
+      height: 75px;
+
+      .food-left {
+        width: 105px;
+        height: 100%;
+        background-color: #ececec;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-top-left-radius: 6px;
+        border-bottom-left-radius: 6px;
+
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+
+      .food-right {
+        padding: 5px 5px 5px 10px;
+        flex: 1;
+
+        .food-right-name {
+          font-weight: normal;
+          font-size: 15px;
+          height: 17px;
+          display: flex;
+          align-items: center;
+          color: #4c4c4c;
+        }
+
+        .food-right-img {
+          height: 14px;
+          display: flex;
+          align-items: center;
+
+          img {
+            height: 14px;
+          }
+        }
+
+        .food-right-price1 {
+          height: 12px;
+
+          div {
+            font-size: 11px;
+            color: #D5D6D6;
+            display: flex;
+            align-items: baseline;
+          }
+        }
+
+        .food-right-price2 {
+          height: 18px;
+
+          div {
+            color: #DE0012;
+            display: flex;
+            align-items: baseline;
+
+            span:nth-child(1) {
+              font-size: 11px;
+            }
+
+            span:nth-child(2) {
+              font-size: 11px;
+            }
+            .qi {
+              font-size: 11px;
+              color: #808080;
+            }
+          }
+        }
+      }
+    }
+    .sell-null {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 105px;
+      height: 75px;
+      padding: 8px 20px;
+      box-sizing: border-box;
+      border-top-left-radius: 6px;
+      border-bottom-left-radius: 6px;
+      background-color: rgba(0, 0, 0, .3);
+    }
+  }
+  // 大图展示
+  .foods-item-con li.big-show {
+    .control {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      .num {
+        color: #fff;
+      }
+    }
+    .coninfo {
+      height: 200px;
+      position: relative;
+
+      .food-left {
+        height: 200px;
+        width: 100%;
+
+        img {
+          width: 100%;
+          height: 100%;
+          border-radius: 6px;
+        }
+      }
+
+      .food-right {
+        background: linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, .8));
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        text-align: right;
+        padding: 16px;
+        box-sizing: border-box;
+        border-radius: 6px;
+
+        .food-right-name {
+          font-size: 18px;
+          color: #fff;
+        }
+
+        .food-right-img {
+          height: 14px;
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          margin-bottom: 40px;
+
+          img {
+            height: 14px;
+          }
+        }
+
+        .food-right-price1 {
+          div {
+            text-decoration: line-through;
+            color: #808080;
+            display: flex;
+            justify-content: flex-end;
+            align-items: baseline;
+
+            span:nth-child(2) {
+              font-size: 11px;
+            }
+
+            span:nth-child(3) {
+              font-size: 16px;
+            }
+          }
+        }
+
+        .food-right-price2 {
+          div {
+            color: #fff;
+            display: flex;
+            justify-content: flex-end;
+            align-items: baseline;
+
+            span:nth-child(2) {
+              font-size: 16px;
+            }
+            .qi {
+              font-size: 11px;
+              color: #808080;
+            }
+          }
+        }
+      }
+
+      .coninfo-tip {
+        font-size: 13px;
+        position: absolute;
+        left: 24px;
+        top: 0;
+        padding: 5px 10px 6px 10px;
+        color: #fff;
+        background: url('../../assets/images/tebg.png') left bottom;
+      }
+    }
+    .sell-null {
+      position: absolute;
+      left: 58px;
+      top: 58px;
+      width: 80px;
+      height: 80px;
+    }
+  }
+}
+
+.shop-cart {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  text-align: center;
+  box-sizing: border-box;
+  background-color: #fff;
+  z-index: 100;
+  .cart-bar {
+    display: flex;
+    width: 100%;
+    height: 50px;
+    background-color: #1a1a1a;
+    .cart-box {
+      flex: 1;
+      display: flex;
+      .cart-box-logo {
+        position: relative;
+        top: -10px;
+        box-sizing: border-box;
+        margin: 0 12px;
+        padding: 6px;
+        width: 48px;
+        height: 48px;
+        background-color: #595757;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        img {
+          width: 29px;
+          height: 29px;
+        }
+        .badge {
+          position: absolute;
+          right: 0;
+          top: 0;
+        }
+      }
+      .price {
+        text-align: left;
+        box-sizing: border-box;
+        font-size: 19px;
+        // border-right: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: flex-end;
+        span:nth-child(1) {
+          font-size: 13px;
+        }
+      }
+      .desc {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 11px;
+        color: #fff;
+      }
+    }
+    .cart-btn {
+      flex: 0 0 108px;
+      width: 108px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 17px;
+      box-sizing: border-box;
+      border-left: 1px solid rgba(255, 255, 255, .5);
+      img {
+        height: 12px;
+        margin-left: 10px;
+      }
+    }
+  }
+  /* 购物车列表 */
+  .cart-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    transform: translate3d(0, -100%, 0);
+    .panel-header {
+      height: 42px;
+      line-height: 42px;
+      padding: 0 18px;
+      background-color: #f3f5f7;
+      display: flex;
+      justify-content: space-between;
+      .title {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        color: #666666;
+        img {
+          height: 26px;
+        }
+      }
+      .empty {
+        font-size: 14px;
+        color: #666666;
+        display: flex;
+        align-items: center;
+        img {
+          height: 26px;
+        }
+      }
+    }
+    .list-content {
+      height: calc(100vh - 92px);
+      // padding: 0 18px;
+      background-color: #fff;
+      overflow: auto;
+      .title {
+        text-align: left;
+        font-size: 14px;
+        color: #939393;
+        padding: 15px 0 5px 0;
+      }
+      .food {
+        display: flex;
+        justify-content: space-between;
+        padding: 20px 10px;
+        box-sizing: border-box;
+        position: relative;
+        .headimgurl {
+          padding-right: 5px;
+          img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+          }
+        }
+        .info {
+          text-align: left;
+          width: 140px;
+          .info-title {
+            font-size: 14px;
+            color: #333333;
+            a {
+              font-size: 12px;
+              color: #999999;
+              text-decoration: underline;
+            }
+          }
+          .des {
+            font-size: 11px;
+            margin-bottom: 5px;
+            color: #999999;
+          }
+          .info-des {
+            font-size: 11px;
+            color: #999999;
+            width: 250px;
+          }
+        }
+        .beizhu {
+          width: 30px;
+          img {
+            width: 20px;
+          }
+        }
+        .price {
+          width: 70px;
+          .price1 {
+            color: #f04722;
+            display: flex;
+            align-items: baseline;
+            span:nth-child(1) {
+              font-size: 11px;
+            }
+            span:nth-child(2) {
+              font-size: 11px;
+            }
+          }
+          .price2 {
+            color: #999999;
+            display: flex;
+            align-items: baseline;
+            span:nth-child(1) {
+              font-size: 11px;
+            }
+            span:nth-child(2) {
+              font-size: 11px;
+            }
+            span:nth-child(3) {
+              font-size: 11px;
+            }
+          }
+        }
+      }
+      .food::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        height: 1px;
+        border-top: 1px solid #d1d1d1;
+        color: #d1d1d1;
+        -webkit-transform-origin: 0 0;
+        transform-origin: 0 0;
+        -webkit-transform: scaleY(0.5);
+        transform: scaleY(0.5);
+      }
+      ul {
+        position: relative;
+      }
+      ul::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        height: 1px;
+        border-top: 1px solid #d1d1d1;
+        color: #d1d1d1;
+        -webkit-transform-origin: 0 0;
+        transform-origin: 0 0;
+        -webkit-transform: scaleY(0.5);
+        transform: scaleY(0.5);
+      }
+      .bz-more {
+        height: 50px;
+        position: relative;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        color: #666666;
+        padding: 0 15px;
+        img {
+          height: 26px;
+        }
+      }
+      .bz-more::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        height: 1px;
+        border-top: 1px solid #d1d1d1;
+        color: #d1d1d1;
+        -webkit-transform-origin: 0 0;
+        transform-origin: 0 0;
+        -webkit-transform: scaleY(0.5);
+        transform: scaleY(0.5);
+      }
+    }
+  }
+  .cart-panel.fold-enter-active,
+  .cart-panel.fold-leave-active {
+    transition: all 0.5s;
+  }
+  .cart-panel.fold-enter,
+  .cart-panel.fold-leave-to {
+    transform: translate3d(0, 0, 0);
+  }
+
+}
+
+
+
+
+
+

@@ -1,257 +1,270 @@
 <template>
-  <div class="start-wrapper">
+  <div class="start-container">
 
-    <div class="bg"></div>
-
-    <div class="start-container">
-
-      <div class="header">
-        <div class="logo-con">
-          <img class="store" :src="tableimgurl">
-          <p>台卡: {{ tableid }}</p>
-        </div>
-        <div class="more">
-          <a href="javascript:;" class="avatar">
-            <img :src="headimgurl">
-          </a>
-        </div>
-      </div>
-
-      <div class="welcome">
-        <p class="nickname">{{ nickname }}</p>
-        <p>欢迎光临, 客观您几位呢</p>
-      </div>
-
-      <div class="con">
-        <div class="peopleNum" v-for="(item, index) in peopleList" :key="item.id">
-          <a href="javascript:;" :class="{'p-active': index === nowCountIndex}"
-            :style="index === nowCountIndex ? ('backgroundColor:' + themeColor) : ''"
-            @click="selectCount(index)">
-            {{ item.id }}
-          </a>
-        </div>
-      </div>
-
-      <div class="footer">
-        <div v-for="(item, index) in typeList" :key="item.id">
-          <a href="javascript:;" class="btn-primary-circle"
-            :style="index === nowTypeIndex ? ('backgroundColor:' + themeColor + ';border: 1px solid ' + themeColor) : ''"
-            @click="selectType(index)">
-            {{ item.name }}
-          </a>
-        </div>
-      </div>
-
-      <div class="loading" v-show="isShowLoading">
-        <img :src="fruitUrl">
-        请稍等...
-      </div>
-
+    <div class="history-box">
+      <a class="history-box-logo bg-primary">
+        <img src="../assets/images/history.png">
+      </a>
     </div>
 
+    <div class="user-box">
+      <div class="user-box-logo">
+        <transition name="fadeHello">
+          <img class="helloimg" v-show="isShowHello" src="../assets/images/hi.png">
+        </transition>
+        <transition name="fadeLogo">
+          <img class="logoimg" :src="headimgurl" v-show="isShowLogo">
+        </transition>
+      </div>
+      <p class="nickname">{{ nickname }}</p>
+      <p class="tableno">桌号：<span>{{ tableno }}</span></p>
+      <div class="welcomeimg" v-if="member == 0">
+        <transition name="fadeWelcome">
+          <img src="../assets/images/welcome.png" v-show="isShowWelcome">
+        </transition>
+      </div>
+    </div>
+
+    <div class="count-box">
+      <div class="count-box-item" v-for="num in 15" v-if="member == 0">
+        <a @click="selectMember(num)" :class="num == members ? 'bg-primary' : ''">
+          <span>{{ num }}</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="type-box">
+      <a class="btn btn-circle" @click="selectType" :class="canOrder ? 'btn-primary' : 'btn-default'">
+        开始点餐
+      </a>
+    </div>
   </div>
 </template>
 
 <script>
-import fruitUrl from '@/assets/fruits-lemon.gif'
-export default {
-  data () {
-    return {
-      themeColor: '#fd6d52', // 主题颜色
-      nowCountIndex: 0, // 选择几位
-      nowTypeIndex: 0, // 选择堂食或打包
-      isShowLoading: false, // 加载中
-      fruitUrl: fruitUrl,
-      // 用户信息
-      openid: '',
-      nickname: '',
-      headimgurl: '',
-      tableid: '', // 台卡号
-      tableimgurl: '/pzcatering-web/images/daxia.jpeg',
-      typeList: [
-        { id: 1, name: '堂食' },
-        { id: 2, name: '打包外卖' },
-      ],
-      peopleList: [
-        { id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 },
-        { id: 6 }, { id: 7 }, { id: 8 }, { id: 9 }, { id: 10 },
-        { id: 11 }, { id: 12 }, { id: 13 }, { id: 14 }, { id: 15 }
-      ]
-    }
-  },
-  created () {
-    this.getUserInfo()
-  },
-  methods: {
-
-    // 获取用户数据
-    getUserInfo () {
-      this.isShowLoading = true
-      this.$ajax.silentGet('getWxUserinfo').then(data => {
-        this.isShowLoading = false
-        if (data) {
-          this.nickname = data.nickname
-          this.headimgurl = data.headimgurl
-          this.tableid = data.tableid
-          this.openid = data.openid
-
-          // 存入 sessionStorage
-          sessionStorage.nickname = this.nickname
-          sessionStorage.headimgurl = this.headimgurl
-          sessionStorage.tableid = this.tableid
-          sessionStorage.openid = this.openid
-          sessionStorage.themeColor = this.themeColor
+  import {mapState} from 'vuex'
+  export default {
+    data () {
+      return {
+        isShowHello: false, // 显示 hello
+        isShowLogo: false, // 显示用户 logo
+        isShowWelcome: false, // 显示 欢迎光临
+        members: 0, // 就餐人数
+      }
+    },
+    computed: {
+      ...mapState({
+        member: state => state.order.member, // 就餐人数
+        tableno: state => state.order.tableno,
+        tablename: state => state.order.tablename,
+        nickname: state => state.order.nickname,
+        headimgurl: state => state.order.headimgurl,
+      }),
+      // 是否可以点餐
+      canOrder () {
+        if (this.member || this.members) {
+          return true
+        } else {
+          return false
         }
-      })
+      }
     },
-
-    // 选择就餐人数
-    selectCount (index) {
-      this.nowCountIndex = index
+    mounted () {
+      this.showTransition()
     },
+    methods: {
+      // 欢迎动画
+      showTransition () {
+        setTimeout(() => {
+          // 0.1s后显示hello
+          this.isShowHello = true;
 
-    // 选择堂食/外带
-    selectType (index) {
-      this.nowTypeIndex = index
-      setTimeout(() => {
-        this.$router.push({name: 'index'})
-      }, 1000)
+          setTimeout(() => {
+            // 2s后隐藏hello
+            this.isShowHello = false;
+            setTimeout(() => {
+              // 0.5s后显示logo
+              this.isShowLogo = true
+            }, 500)
+          }, 2000)
+
+        }, 100);
+
+        setTimeout(() => {
+          // 欢迎观临
+          this.isShowWelcome = true
+        }, 1000)
+      },
+      // 选择就餐人数
+      selectMember (num) {
+        this.members = num;
+      },
+      // 开始点餐
+      selectType () {
+        if (this.canOrder) {
+          if (this.members > 0) {
+            let msg = {
+              type: 'select_member',
+              data: {
+                member: this.members,
+              }
+            };
+            this.$store.dispatch("sendWsMsg", msg);
+          }
+          this.$router.push({name: 'order'});
+        }
+      }
     }
-
   }
-}
 </script>
 
-<style scoped>
-.start-wrapper {
-  height: 100vh;
-  width: 100vw;
-  background: url('/pzcatering-web/images/daxia.jpeg') no-repeat center center;
-  box-sizing: border-box;
-}
-.bg {
-  height: 100vh;
-  width: 100vw;
-  background: -webkit-linear-gradient(rgba(255,0,0,0), #000000); /* Safari 5.1 - 6.0 */
-  background: -o-linear-gradient(rgba(255,0,0,0), #000000); /* Opera 11.1 - 12.0 */
-  background: -moz-linear-gradient(rgba(255,0,0,0), #000000); /* Firefox 3.6 - 15 */
-  background: linear-gradient(rgba(255,0,0,0), #000000);
-}
-.start-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-}
-.start-container .header {
-  height: 250px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
-.start-container .header .logo-con {
-  text-align: center;
-}
-.start-container .header .logo-con p {
-  color: #fff;
-  font-size: 20px;
-}
-.start-container .header .more {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background-color: #fff;
-  border-radius: 100%;
-  height: 40px;
-  width: 40px;
-  overflow: hidden;
-}
-.more .avatar img {
-  width: 100%;
-}
-.start-container .store {
-  width: 80px;
-  height: 80px;
-  border-radius: 50px;
-  border: 1px solid #fff;
-}
+<style lang="scss" scoped>
+  .start-container {
+    height: 100vh;
+    width: 100vw;
+    background: -webkit-linear-gradient(rgba(0, 0, 0, 0), #000000), url('../assets/images/start-bg.png') no-repeat center center;
+    background: -o-linear-gradient(rgba(0, 0, 0, 0), #000000), url('../assets/images/start-bg.png') no-repeat center center;
+    background: -moz-linear-gradient(rgba(0, 0, 0, 0), #000000), url('../assets/images/start-bg.png') no-repeat center center;
+    background: linear-gradient(rgba(0, 0, 0, 0), #000000), url('../assets/images/start-bg.png') no-repeat center center;
+    background-size: 100% 100%;
+    box-sizing: border-box;
+    .history-box {
+      height: 18vh;
+      display: flex;
+      justify-content: flex-end;
+      .history-box-logo {
+        margin-right: 20px;
+        margin-top: 30px;
+        height: 32px;
+        width: 32px;
+        border-radius: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        img {
+          height: 19px;
+        }
+      }
+    }
+    .user-box {
+      box-sizing: border-box;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      padding-bottom: 20px;
+      .user-box-logo {
+        width: 67px;
+        height: 67px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+        .helloimg {
+          width: 63px;
+          height: 63px;
+        }
+        .logoimg {
+          width: 67px;
+          height: 67px;
+          border-radius: 50px;
+        }
+      }
+      .nickname {
+        height: 29px;
+        font-size: 21px;
+        margin-bottom: 28px;
+      }
+      .tableno {
+        margin-bottom: 20px;
+        font-size: 15px;
+        span {
+          font-size: 18px;
+        }
+      }
+      .welcomeimg {
+        height: 21px;
+        display: flex;
+        justify-content: center;
+        img {
+          width: 60%;
+        }
+      }
+    }
+    .count-box {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      height: 26vh;
+      width: 100%;
+      padding: 0 50px;
+      box-sizing: border-box;
+      .count-box-item {
+        width: 20%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        a {
+          width: 42px;
+          height: 42px;
+          border-radius: 50px 50px 10px 50px;
+          transform: rotate(45deg);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          > span {
+            color: #fff;
+            font-size: 20px;
+            transform: rotate(-45deg);
+          }
+        }
+      }
+    }
+    .type-box {
+      height: 15vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .btn {
+        font-size: 18px;
+        width: 112px;
+        padding: 10px 0;
+      }
+    }
+  }
 
-.welcome {
-  color: #fff;
-  text-align: center;
-  margin-bottom: 40px;
-}
-.welcome .nickname {
-  font-size: 18px;
-  margin-bottom: 5px;
-}
+  /* 动画效果1 */
+  .fadeHello-enter-active,
+  .fadeHello-leave-active {
+    transition: all .5s;
+  }
 
-.con {
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-  padding: 0 50px;
-  box-sizing: border-box;
-}
-.peopleNum {
-  width: 20%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.peopleNum a {
-  color: #282828;
-  font-size: 14px;
-  background-color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 100%;
-  cursor: pointer;
-  margin-bottom: 15px;
-}
-.peopleNum a.p-active {
-  color: #fff;
-}
+  .fadeHello-enter,
+  .fadeHello-leave-to {
+    opacity: 0;
+  }
 
-.footer {
-  height: 100px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.btn-primary-circle {
-  display: inline-block;
-  padding: 10px 20px;
-  color: #fff;
-  border-radius: 50px;
-  border: 1px solid #fff;
-  width: 80px;
-  text-align: center;
-}
-.btn-primary-circle:first-child {
-  margin-right: 10px;
-}
-/* .active {
-  background-color: #fd6d52;
-  border: 1px solid #fd6d52;
-} */
+  /* 动画效果2 */
+  .fadeLogo-enter-active,
+  .fadeLogo-leave-active {
+    transition: all .5s;
+  }
 
-.loading {
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  background-color: #fff;
-  color: #c6c6c6;
-  font-size: 14px;
-  top: 0;
-  left: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
+  .fadeLogo-enter,
+  .fadeLogo-leave-to {
+    opacity: 0;
+  }
+
+  /* 动画效果3 */
+  .fadeWelcome-enter-active,
+  .fadeWelcome-leave-active {
+    transition: all .5s;
+  }
+
+  .fadeWelcome-enter,
+  .fadeWelcome-leave-to {
+    opacity: 0;
+  }
 </style>

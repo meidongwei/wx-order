@@ -1,18 +1,16 @@
 <template>
   <div>
     <div class="order-header">
-      <div class="header-img"
-        :style="'backgroundColor:' + themeColor"></div>
+      <div class="header-img"></div>
       <h2>
-        <span :style="'color:' + themeColor">A101</span>
-        下单成功~
+        <span>A101</span>下单成功~
       </h2>
       <p>正在为您烹饪美食，客官请稍等...</p>
     </div>
     <div class="segment">
       <div class="title">
-        <div :style="'color:' + themeColor">已点菜品</div>
-        <div>您点了<span :style="'color:' + themeColor">7</span>道菜</div>
+        <div>已点菜品</div>
+        <div>您点了<span>7</span>道菜</div>
       </div>
       <ul>
         <li>
@@ -35,26 +33,15 @@
         合计：<span>9999</span>
       </div>
     </div>
-    <div class="seg-footer">
-      <a class="btn-circle" href="javascript:;"
-        :style="'color:' + themeColor"
-        @click="gotoIndex">
-        继续加菜
-      </a>
-      <a href="javascript:;"
-        :style="'backgroundColor:' + themeColor"
-        @click="gotoPay">结账</a>
-    </div>
+    <FooterBtnGroup text1="继续加菜" text2="结账"
+      @submit1="gotoIndex" @submit2="gotoPay"/>
   </div>
 </template>
 
 <script>
+import FooterBtnGroup from '@/components/base/footerBtnGroup'
 export default {
-  computed: {
-    themeColor () {
-      return sessionStorage.getItem('themeColor')
-    }
-  },
+  components: { FooterBtnGroup },
   methods: {
     gotoIndex () {
       this.$router.push({name: 'index'})
@@ -66,27 +53,28 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .order-header {
   height: 30vh;
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
+  .header-img {
+    height: 80px;
+    width: 80px;
+    background-color: #fd6d52;
+    margin-bottom: 10px;
+  }
 }
-.order-header .header-img {
-  height: 80px;
-  width: 80px;
-  /* background-color: #fd6d52; */
-  margin-bottom: 10px;
-}
+
 .order-header h2 {
   font-weight: normal;
   font-size: 20px;
 }
-/* .order-header h2 span {
+.order-header h2 span {
   color: #fd6d52;
-} */
+}
 .order-header p {
   font-size: 14px;
   color: #919191;
@@ -111,12 +99,5 @@ export default {
 
 .content-total span {
   color: #f04722;
-}
-
-
-
-.seg-footer a.btn-circle {
-  background-color: #fff;
-  /* color: #fd6d52; */
 }
 </style>

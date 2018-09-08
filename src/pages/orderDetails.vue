@@ -1,7 +1,7 @@
 <template>
   <div class="bg">
     <div class="segment">
-      <div class="title" :style="'color:' + themeColor">订单菜品</div>
+      <div class="title">订单菜品</div>
       <ul>
         <li>
           <span>蒸羊羔儿</span>
@@ -24,7 +24,7 @@
       </div>
     </div>
     <div class="segment order-info">
-      <div class="title" :style="'color:' + themeColor">订单信息</div>
+      <div class="title">订单信息</div>
       <ul>
         <li>
           <span>台号</span>
@@ -44,25 +44,21 @@
         </li>
       </ul>
     </div>
-    <div class="seg-footer">
-      <a href="javascript:;"
-        :style="'backgroundColor:' + themeColor"
-        @click="goTo">支付87.5</a>
-    </div>
+    <FooterBtnGroup :show1="false" text2="支付123"
+      @submit2="goTo"/>
   </div>
 </template>
 
 <script>
+import FooterBtnGroup from '@/components/base/footerBtnGroup'
 export default {
+  components: { FooterBtnGroup },
   data () {
     return {
       isShowOrder: false
     }
   },
   computed: {
-    themeColor () {
-      return sessionStorage.getItem('themeColor')
-    },
     text () {
       return this.isShowOrder ? '点击收起订单' : '点击查看订单'
     }
@@ -84,20 +80,21 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .segment {
   padding-bottom: 15px;
+  .title {
+    padding: 10px 15px;
+    color: #fd6d52;
+    background-color: #fff;
+  }
+  .footer {
+    padding: 10px 15px;
+    background-color: #fff;
+    text-align: right;
+  }
 }
-.segment .title {
-  padding: 10px 15px;
-  /* color: #fd6d52; */
-  background-color: #fff;
-}
-.segment .footer {
-  padding: 10px 15px;
-  background-color: #fff;
-  text-align: right;
-}
+
 .order-info ul li span:nth-child(2) {
   width: 70%;
   text-align: right;

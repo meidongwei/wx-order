@@ -25,9 +25,7 @@
             <span>62.0</span>
           </li>
         </ul>
-        <div class="show-list-btn"
-          :style="'color:' + themeColor"
-          @click="handleShowOrder">
+        <div class="show-list-btn" @click="handleShowOrder">
           {{ text }}
         </div>
       </div>
@@ -66,25 +64,21 @@
         </li>
       </ul>
     </div>
-    <div class="seg-footer">
-      <a href="javascript:;"
-        :style="'backgroundColor:' + themeColor"
-        @click="goTo">支付87.5</a>
-    </div>
+    <FooterBtnGroup :show1="false" text2="支付87.5"
+      @submit2="goTo"/>
   </div>
 </template>
 
 <script>
+import FooterBtnGroup from '@/components/base/footerBtnGroup'
 export default {
+  components: { FooterBtnGroup },
   data () {
     return {
       isShowOrder: false
     }
   },
   computed: {
-    themeColor () {
-      return sessionStorage.getItem('themeColor')
-    },
     text () {
       return this.isShowOrder ? '点击收起订单' : '点击查看订单'
     }
@@ -106,7 +100,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .pay-header {
   background-color: #fff;
   margin-bottom: 5px;
@@ -175,7 +169,7 @@ export default {
 }
 .header-order .show-list-btn {
   text-align: center;
-  /* color: #fd6d52; */
+  color: #fd6d52;
   font-size: 12px;
   padding: 10px 15px;
 }
